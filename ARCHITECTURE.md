@@ -1,126 +1,183 @@
-# Life OS - Architecture Overview
+# Life OS Architecture Documentation
 
-## Introduction
+## Project Overview
 
-Life OS is a personal productivity and habit tracking application designed to help users organize and manage various aspects of their life in one centralized dashboard. The application follows a modern full-stack JavaScript architecture with a React frontend and Express backend.
+Life OS is a minimalist personal life management dashboard designed to enhance productivity and personal growth through intuitive task and habit tracking. The application focuses on user engagement and motivational design while maintaining data persistence between sessions.
+
+## Key Features
+
+- **Task Management**: Create, track, and complete daily tasks
+- **Habit Tracking**: Boolean and counter-based habits with customizable repeat schedules
+- **Life Categories**: Organize goals/habits across Health, Career, Finances, and Personal domains
+- **Theme Support**: Toggle between dark and light modes with persistent preferences
+- **Data Persistence**: JSON-based local storage for reliable data across sessions
+- **Daily Logging**: Automatic archiving of daily data for future visualization and reporting
 
 ## Tech Stack
 
-- **Frontend**: React, TypeScript, Tailwind CSS, Shadcn UI
-- **Backend**: Node.js, Express
-- **Database**: PostgreSQL (with Drizzle ORM)
-- **State Management**: TanStack Query (React Query)
-- **Form Handling**: React Hook Form with Zod validation
-- **Routing**: Wouter for client-side routing
-- **Authentication**: Custom PIN/passcode authentication
-- **Offline Support**: IndexedDB with sync capabilities
+### Frontend
+- **React**: Component-based UI library for building the user interface
+- **TypeScript**: Type-safe JavaScript for improved developer experience
+- **Tailwind CSS**: Utility-first CSS framework for responsive styling
+- **shadcn/ui**: Component library built on Radix UI primitives for accessible UI components
+- **Wouter**: Lightweight routing library for page navigation
+- **TanStack Query (React Query)**: Data fetching and caching library
+- **React Hook Form**: Form validation and management
+- **date-fns**: Date manipulation utilities
 
-## Application Structure
+### Backend
+- **Express.js**: Node.js web application framework for handling API requests
+- **TypeScript**: Used on both frontend and backend for type consistency
+- **JSON File Storage**: Custom MemStorage implementation for data persistence
+- **Zod**: Schema validation library for type-safe data validation
+
+### Build & Development
+- **Vite**: Modern frontend build tool for fast development and optimized production builds
+- **TSX**: TypeScript execution environment for running Node.js with TypeScript
+- **Drizzle ORM**: Database ORM for schema definitions and future database integration
+- **ESBuild**: Fast JavaScript bundler
+
+## Application Architecture
+
+### Directory Structure
 
 ```
-├── client/                  # Frontend codebase
+├── client/                # Frontend React application
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── hooks/           # Custom React hooks
-│   │   ├── lib/             # Utility functions and shared code
-│   │   ├── pages/           # Page components for different routes
-│   │   ├── App.tsx          # Main application component
-│   │   └── main.tsx         # Application entry point
+│   │   ├── components/    # UI components
+│   │   │   ├── ui/        # Base UI components from shadcn
+│   │   │   └── ...        # App-specific components
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── lib/           # Shared utilities & context providers
+│   │   ├── pages/         # Page components for different routes
+│   │   └── App.tsx        # Main application component & routing
 │
-├── server/                  # Backend codebase
-│   ├── index.ts             # Express server setup and initialization
-│   ├── routes.ts            # API route definitions
-│   ├── storage.ts           # Data storage implementation
-│   └── vite.ts              # Vite configuration for development
+├── server/                # Backend Express application  
+│   ├── index.ts           # Server entry point
+│   ├── routes.ts          # API route definitions
+│   ├── storage.ts         # Data storage implementation
+│   └── vite.ts            # Vite integration for server
 │
-├── shared/                  # Shared code between client and server
-│   └── schema.ts            # Database schema definitions with Drizzle
+├── shared/                # Shared code between frontend and backend
+│   └── schema.ts          # Database/entity schemas & types
 │
-└── functions/               # Serverless functions (for deployment)
+├── data/                  # Data storage directory
+│   ├── logs/              # Daily log storage
+│   │   └── daily/         # Organized by date (YYYY-MM-DD)
+│   ├── habits.json        # Current habits data
+│   ├── tasks.json         # Current tasks data
+│   └── counters.json      # ID counters for entities
 ```
 
-## Core Features
+### Data Flow
 
-### 1. Habit Tracking
+1. **Frontend to Backend**:
+   - React components render UI based on state
+   - TanStack Query manages data fetching and state
+   - API requests are sent to Express backend endpoints
+   - Response data is cached and used to update UI
 
-- Track daily and weekly habits
-- Boolean habits (completed/failed) and counter-based habits
-- Automatic habit reset based on configurable day start time
-- Ability to view all habits and edit/delete them
+2. **Backend to Storage**:
+   - Express routes receive API requests
+   - Routes invoke methods on the storage interface
+   - MemStorage implementation manages CRUD operations
+   - Data is persisted to JSON files in the data directory
 
-### 2. Task Management
+3. **Settings & Preferences**:
+   - User settings managed through React Context
+   - Theme preference and day start time stored and persisted
+   - Settings synchronized with backend when changed
 
-- Simple to-do list functionality
-- Mark tasks as completed/incomplete
-- Add new tasks with a single input field
+4. **Daily Reset Logic**:
+   - Habits reset based on user-defined day start time
+   - Previous state is archived in daily logs before reset
+   - Task and habit data stored in date-specific directories
 
-### 3. Life Category Notes
+### Key Components
 
-- Organize notes by life categories (Health, Career, Finances, Personal)
-- Markdown editor for rich text formatting
-- Automatic saving of notes
+#### Frontend Components
 
-### 4. Offline Support
+- **Header**: Main navigation and date display with settings access
+- **TaskSection**: Task list display and management
+- **HabitSection**: Habit tracking and visualization
+- **SettingsModal**: Configuration for appearance, timing, and data management
+- **LifeCategories**: Navigation between different life domains
+- **CreateHabitDialog**: Form for creating and editing habits
 
-- IndexedDB for local storage
-- Background synchronization when reconnected to the internet
-- Pending actions queue for conflict resolution
+#### Backend Services
 
-### 5. Authentication & Security
+- **MemStorage**: JSON-based storage implementation with CRUD operations
+- **Express Routes**: RESTful API endpoints for data access and manipulation
+- **Daily Logging**: Automatic data archiving for historical tracking
 
-- PIN/passcode-based authentication
-- Device-specific authentication
-- Option to reset passcode through settings
-- Environment variable-based default passcode ("6969")
-- Client-side fallback for offline authentication
+## Data Model
 
-### 6. Settings & Customization
+### Task
 
-- Configurable day start time
-- Dark/light theme toggle
-- Habit reset functionality
-- Data management options
+```typescript
+interface Task {
+  id: number;
+  text: string;
+  completed: boolean;
+  createdAt: string; // ISO date string
+}
+```
 
-## Data Flow
+### Habit
 
-1. **Client-Side**:
-   - React components use TanStack Query to fetch data from the API
-   - Form submissions use React Hook Form with Zod validation
-   - Offline changes are stored in IndexedDB and synced when online
+```typescript
+interface Habit {
+  id: number;
+  name: string;
+  type: 'boolean' | 'counter';
+  value?: number;
+  maxValue?: number;
+  status?: 'completed' | 'failed';
+  repeatType: 'daily' | 'weekly';
+  repeatDays: string; // Comma-separated days (1=Monday, 7=Sunday)
+  lastReset?: string; // ISO date string
+  isActiveToday?: boolean; // Computed property
+}
+```
 
-2. **Server-Side**:
-   - Express routes handle API requests
-   - Data is stored using the storage implementation
-   - Authentication middleware validates requests
+## API Endpoints
 
-3. **Data Synchronization**:
-   - Background sync service regularly checks for pending actions
-   - Conflicts are resolved using timestamps and defined strategies
-   - Failed actions remain in the queue for retry
+### Tasks
+- `GET /api/tasks`: Retrieve all tasks
+- `GET /api/tasks/:id`: Retrieve a specific task
+- `POST /api/tasks`: Create a new task
+- `PATCH /api/tasks/:id`: Update a task
+- `DELETE /api/tasks/:id`: Delete a task
 
-## Deployment
+### Habits
+- `GET /api/habits`: Retrieve all habits
+- `GET /api/habits/:id`: Retrieve a specific habit
+- `POST /api/habits`: Create a new habit
+- `PATCH /api/habits/:id`: Update a habit
+- `PATCH /api/habits/:id/complete`: Mark a habit as completed
+- `PATCH /api/habits/:id/fail`: Mark a habit as failed
+- `PATCH /api/habits/:id/increment`: Increment a counter habit
+- `PATCH /api/habits/:id/decrement`: Decrement a counter habit
+- `DELETE /api/habits/:id`: Delete a habit
+- `POST /api/reset-habits`: Reset all habits for a new day
 
-The application is configured for deployment on Netlify with the following setup:
-
-- Frontend assets are built and served from the `dist` directory
-- Backend API is deployed as serverless functions
-- Netlify redirects handle API routing and SPA navigation
-- PostgreSQL database is accessed through environment variables
-
-### Environment Variables
-
-The application uses environment variables for configuration:
-
-- `DEFAULT_PASSCODE`: Sets the default passcode for server-side authentication (defaults to "6969")
-- `VITE_DEFAULT_PASSCODE`: Client-side version of the default passcode for offline mode
-- Environment variables are configured in:
-  - `.env` file for local development
-  - `netlify.toml` for production deployment with the `[build.environment]` section
+### Settings
+- `GET /api/day-start-time`: Get the configured day start time
+- `POST /api/day-start-time`: Update the day start time
 
 ## Future Enhancements
 
-- User accounts with cloud synchronization
-- Data visualization and habit statistics
-- Mobile application with React Native
-- Expanded categories and customization options
-- Calendar integration for scheduling
+1. **Database Integration**: Migration from JSON files to a full database with Drizzle ORM
+2. **Data Visualization**: Reporting and insights from historical daily logs
+3. **Mobile Optimization**: Additional responsive design for mobile-first experience
+4. **User Authentication**: Multi-user support with secure authentication
+5. **Cloud Synchronization**: Data backup and sync across devices
+6. **Notifications**: Reminders for habits and important tasks
+
+## Deployment Considerations
+
+- **File Permissions**: Ensure data directory is writable in production
+- **Data Backup**: Implement regular backups of the data directory
+- **Environment Variables**: Configure using environment variables for production settings
+- **Error Handling**: Comprehensive error handling for production stability
+- **Logging**: Production-ready logging for monitoring and debugging

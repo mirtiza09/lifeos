@@ -1,6 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { processApiCall } from './syncService';
 import { isOnline } from './networkUtils';
+import API_URL from './apiConfig';
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -69,7 +70,9 @@ export async function apiRequest(
     
     if (isOnline()) {
       // If online, try normal fetch first
-      const res = await fetch(url, {
+      // Prepend API_URL for Netlify deployment
+      const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
+      const res = await fetch(fullUrl, {
         method,
         headers: data ? { "Content-Type": "application/json" } : {},
         body: data ? JSON.stringify(data) : undefined,
@@ -199,8 +202,9 @@ export const getQueryFn = <TData>(options: {
       }
       
       if (isOnline()) {
-        // Try online fetch first
-        const res = await fetch(url, {
+        // Try online fetch first with API_URL prepended
+        const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
+        const res = await fetch(fullUrl, {
           credentials: "include",
         });
   

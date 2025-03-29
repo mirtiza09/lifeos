@@ -7,13 +7,11 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  hashedPasscode: text("hashed_passcode"), // 4-digit passcode (hashed)
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
-  hashedPasscode: true,
 });
 
 // Tasks table for Life OS
@@ -22,7 +20,7 @@ export const tasks = pgTable("tasks", {
   text: text("text").notNull(),
   completed: boolean("completed").default(false).notNull(),
   createdAt: text("created_at").notNull(), // ISO date string
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id), // Nullable foreign key
 });
 
 export const insertTaskSchema = createInsertSchema(tasks).pick({
@@ -42,7 +40,7 @@ export const habits = pgTable("habits", {
   status: text("status"), // 'completed' or 'failed' for boolean habits
   repeatType: text("repeat_type").default("daily").notNull(), // 'daily' or 'weekly'
   repeatDays: text("repeat_days").default("1,2,3,4,5,6,7"), // Comma-separated days (1=Monday, 7=Sunday)
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id), // Nullable foreign key
   lastReset: text("last_reset"), // ISO date string of last reset
 });
 
@@ -64,7 +62,7 @@ export const notes = pgTable("notes", {
   category: text("category").notNull(), // 'health', 'career', 'finances', 'personal'
   content: text("content").default(''), // Markdown content
   updatedAt: text("updated_at").notNull(), // ISO date string
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id), // Nullable foreign key
 });
 
 export const insertNoteSchema = createInsertSchema(notes).pick({

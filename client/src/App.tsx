@@ -1,5 +1,5 @@
 import { Switch, Route } from "wouter";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,10 +10,9 @@ import Career from "@/pages/Career";
 import Finances from "@/pages/Finances";
 import Personal from "@/pages/Personal";
 import { SettingsProvider } from "@/lib/settingsContext";
+import NetworkStatusBar from "@/components/NetworkStatusBar";
 import { initOfflineStorage } from "@/lib/offlineStorage";
-import PasscodeVerification from "@/components/PasscodeVerification";
-import PasscodeSetup from "@/components/PasscodeSetup";
-import { isNewDevice, hasPasscodeSetup } from "@/lib/pwaUtils";
+import { startSyncService, stopSyncService } from "@/lib/syncService";
 
 function Router() {
   return (
@@ -29,75 +28,34 @@ function Router() {
 }
 
 function AppContent() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [needsPasscodeSetup, setNeedsPasscodeSetup] = useState(false);
-  const [showPasscodeSetup, setShowPasscodeSetup] = useState(false);
-
-  // Check authentication status and initialize offline storage
+  // Initialize offline storage and sync service
   useEffect(() => {
-    const setupAppData = async () => {
+    const setupOfflineSupport = async () => {
       try {
         // Initialize IndexedDB storage
         await initOfflineStorage();
         console.log('Offline storage initialized');
         
-        // Check if passcode is set up
-        const passcodeExists = await hasPasscodeSetup();
-        
-        if (!passcodeExists) {
-          console.log('No passcode set up yet, showing passcode setup');
-          setNeedsPasscodeSetup(true);
-          setShowPasscodeSetup(true);
-        } else if (isNewDevice()) {
-          console.log('Passcode exists but device not verified');
-          // Passcode exists but this device is not verified
-          setIsAuthenticated(false);
-        } else {
-          console.log('Device already verified');
-          setIsAuthenticated(true);
-        }
+        // Start sync service (checks every 30 seconds)
+        startSyncService(30000);
+        console.log('Sync service started');
       } catch (error) {
-        console.error('Failed to initialize app:', error);
-        
-        // If there's an error, fall back to checking device ID directly
-        if (!isNewDevice()) {
-          setIsAuthenticated(true);
-        }
+        console.error('Failed to initialize offline support:', error);
       }
     };
     
-    setupAppData();
+    setupOfflineSupport();
+    
+    // Clean up on unmount
+    return () => {
+      stopSyncService();
+    };
   }, []);
-  
-  const handlePasscodeVerified = () => {
-    setIsAuthenticated(true);
-  };
-  
-  const handlePasscodeSetup = () => {
-    setIsAuthenticated(true);
-    setNeedsPasscodeSetup(false);
-  };
-  
-  // Only show the app content if authenticated
-  if (!isAuthenticated) {
-    return (
-      <>
-        <PasscodeVerification onVerified={handlePasscodeVerified} />
-        <Toaster />
-      </>
-    );
-  }
   
   return (
     <>
-      {needsPasscodeSetup && (
-        <PasscodeSetup 
-          open={showPasscodeSetup} 
-          onOpenChange={setShowPasscodeSetup}
-          onComplete={handlePasscodeSetup}
-        />
-      )}
       <Router />
+      <NetworkStatusBar />
       <Toaster />
     </>
   );

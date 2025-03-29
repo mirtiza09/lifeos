@@ -411,62 +411,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to update day start time" });
     }
   });
-  
-  // Passcode status endpoint - check if a passcode is set up
-  app.get("/api/auth/passcode-status", async (req, res) => {
-    try {
-      // Check if there's a user with a passcode set
-      const hasPasscode = await storage.hasPasscodeSetup();
-      res.json({ hasPasscode });
-    } catch (error) {
-      console.error('Error checking passcode status:', error);
-      res.status(500).json({ message: "Failed to check passcode status" });
-    }
-  });
-  
-  // Passcode verification endpoint
-  app.post("/api/auth/verify-passcode", async (req, res) => {
-    try {
-      const { passcode } = req.body;
-      
-      if (!passcode || typeof passcode !== 'string' || passcode.length !== 4) {
-        return res.status(400).json({ message: "Invalid passcode format. Must be a 4-digit code." });
-      }
-      
-      const isValid = await storage.verifyPasscode(passcode);
-      
-      if (isValid) {
-        res.json({ success: true, message: "Passcode verified successfully" });
-      } else {
-        res.status(401).json({ success: false, message: "Invalid passcode" });
-      }
-    } catch (error) {
-      console.error('Error verifying passcode:', error);
-      res.status(500).json({ message: "Failed to verify passcode" });
-    }
-  });
-  
-  // Set passcode endpoint
-  app.post("/api/auth/set-passcode", async (req, res) => {
-    try {
-      const { passcode } = req.body;
-      
-      if (!passcode || typeof passcode !== 'string' || passcode.length !== 4) {
-        return res.status(400).json({ message: "Invalid passcode format. Must be a 4-digit code." });
-      }
-      
-      const success = await storage.setPasscode(passcode);
-      
-      if (success) {
-        res.json({ success: true, message: "Passcode set successfully" });
-      } else {
-        res.status(500).json({ success: false, message: "Failed to set passcode" });
-      }
-    } catch (error) {
-      console.error('Error setting passcode:', error);
-      res.status(500).json({ message: "Failed to set passcode" });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;

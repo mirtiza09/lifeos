@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupDatabase } from "./migrateToPostgres";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,20 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Setup database tables if using PostgreSQL
+  if (process.env.DATABASE_URL) {
+    try {
+      log('Setting up database tables...');
+      await setupDatabase();
+      log('Database tables setup completed.');
+      
+      // Database setup completed - no migration in normal startup
+      log('Database ready to use.');
+    } catch (error) {
+      log(`Error during database setup/migration: ${error}`);
+    }
+  }
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

@@ -14,9 +14,6 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  verifyPasscode(passcode: string): Promise<boolean>;
-  setPasscode(passcode: string): Promise<boolean>;
-  hasPasscodeSetup(): Promise<boolean>;
   
   // Task methods
   getTasks(): Promise<Task[]>;
@@ -43,6 +40,9 @@ export interface IStorage {
   createNote(note: InsertNote): Promise<Note>;
   updateNote(id: number, note: Partial<InsertNote>): Promise<Note | undefined>;
   deleteNote(id: number): Promise<boolean>;
+  
+  // Utility methods
+  logDailyData(dateStr?: string, resetHabits?: boolean): void;
 }
 
 // Define storage file paths
@@ -93,29 +93,9 @@ export class MemStorage implements IStorage {
     // Load data from files if they exist, otherwise initialize with defaults
     if (this.loadFromFiles()) {
       console.log('Data loaded from files successfully');
-      
-      // Check if we have a user with a passcode set, if not set the default one
-      this.hasPasscodeSetup().then(hasPasscode => {
-        if (!hasPasscode) {
-          // Use environment variable for default passcode, fallback to "6969" if not defined
-          const defaultPasscode = process.env.DEFAULT_PASSCODE || '6969';
-          console.log(`No passcode found, setting default passcode to "${defaultPasscode}"`);
-          this.setPasscode(defaultPasscode).then(() => {
-            console.log('Default passcode set successfully');
-          });
-        }
-      });
     } else {
       console.log('No existing data files found, initializing with defaults');
       this.initializeDefaultData();
-      
-      // Set the default passcode using environment variable
-      const defaultPasscode = process.env.DEFAULT_PASSCODE || '6969';
-      console.log(`Setting default passcode to "${defaultPasscode}"`);
-      this.setPasscode(defaultPasscode).then(() => {
-        console.log('Default passcode set successfully');
-      });
-      
       this.saveToFiles(); // Save default data to files
     }
   }
@@ -413,77 +393,9 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
-    // Ensure we have proper types for the user object
-    const user: User = { 
-      ...insertUser, 
-      id,
-      hashedPasscode: insertUser.hashedPasscode || null 
-    };
+    const user: User = { ...insertUser, id };
     this.users.set(id, user);
-    this.saveToFiles(); // Save changes to files
     return user;
-  }
-  
-  // Simple hashing function for the passcode (in a real app, use a more secure method)
-  private hashPasscode(passcode: string): string {
-    // Simple hash for demo purposes only, in production use a proper library like bcrypt
-    let hash = 0;
-    for (let i = 0; i < passcode.length; i++) {
-      const char = passcode.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash).toString();
-  }
-  
-  async verifyPasscode(passcode: string): Promise<boolean> {
-    // Check if any user has the passcode (for simplicity we're using a global passcode)
-    // In a real multi-user system, you'd verify based on the current user
-    const users = Array.from(this.users.values());
-    
-    // If no users exist yet, allow setting the passcode
-    if (users.length === 0) {
-      return false;
-    }
-    
-    // Find any user with the hashed passcode
-    const hashedInput = this.hashPasscode(passcode);
-    const userWithPasscode = users.find(user => user.hashedPasscode === hashedInput);
-    
-    return !!userWithPasscode;
-  }
-  
-  async hasPasscodeSetup(): Promise<boolean> {
-    // Check if any user has a hashedPasscode set
-    const users = Array.from(this.users.values());
-    return users.some(user => user.hashedPasscode !== null && user.hashedPasscode !== undefined);
-  }
-  
-  async setPasscode(passcode: string): Promise<boolean> {
-    try {
-      // For simplicity, we'll set the passcode on the first user or create a new user
-      let targetUser: User;
-      
-      const users = Array.from(this.users.values());
-      if (users.length > 0) {
-        targetUser = users[0];
-        targetUser.hashedPasscode = this.hashPasscode(passcode);
-        this.users.set(targetUser.id, targetUser);
-      } else {
-        // Create a default user with the passcode
-        targetUser = await this.createUser({
-          username: 'default',
-          password: 'default', // This is just a placeholder as we're moving to passcode
-          hashedPasscode: this.hashPasscode(passcode)
-        });
-      }
-      
-      this.saveToFiles(); // Save changes to files
-      return true;
-    } catch (error) {
-      console.error('Error setting passcode:', error);
-      return false;
-    }
   }
 
   // Task methods
@@ -729,4 +641,24 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Import PostgreSQL storage implementation
+import { PgStorage } from './pgStorage';
+
+// Determine which storage implementation to use
+// We'll be using PostgreSQL for all environments to ensure data persistence
+let storageImplementation: IStorage;
+
+console.log('Environment USE_POSTGRES:', process.env.USE_POSTGRES);
+console.log('DATABASE_URL available:', !!process.env.DATABASE_URL);
+
+// Force PostgreSQL usage for data persistence
+try {
+  storageImplementation = new PgStorage();
+  console.log('Using PostgreSQL storage implementation');
+} catch (error) {
+  console.error('Failed to initialize PostgreSQL storage, falling back to MemStorage:', error);
+  storageImplementation = new MemStorage();
+  console.log('Using MemStorage implementation as fallback');
+}
+
+export const storage = storageImplementation;

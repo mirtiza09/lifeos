@@ -26,7 +26,6 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { useSettings } from "@/lib/settingsContext";
 import { useToast } from "@/hooks/use-toast";
-import { clearDeviceId } from "@/lib/pwaUtils";
 
 export default function Header() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -99,23 +98,6 @@ export default function Header() {
     } finally {
       setIsResetting(false);
     }
-  };
-  
-  const handleResetPasscode = () => {
-    // Clear the device ID and passcode hash from localStorage
-    clearDeviceId();
-    localStorage.removeItem('passcodeHash');
-    
-    toast({
-      title: "Passcode Reset",
-      description: "Authentication data cleared. Refresh the page to set up a new passcode.",
-    });
-    
-    // Close the dialog and reload the page to trigger the passcode setup flow
-    setSettingsOpen(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
   };
 
   return (
@@ -286,28 +268,6 @@ export default function Header() {
                         ./data/logs/daily/YYYY-MM-DD/
                       </code>
                     </div>
-                  </div>
-                  
-                  <Separator className="my-3" />
-                  
-                  <div>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <AlertCircle className="w-4 h-4" />
-                      <h3 className="font-medium">Reset Passcode</h3>
-                    </div>
-                    
-                    <div className="text-xs text-muted-foreground mb-3">
-                      This will clear your current passcode and prompt you to create a new one.
-                    </div>
-                    
-                    <Button
-                      variant="destructive"
-                      onClick={handleResetPasscode}
-                      className="rounded-none mt-1 w-full"
-                      size="sm"
-                    >
-                      Reset Passcode
-                    </Button>
                   </div>
                 </div>
               </TabsContent>

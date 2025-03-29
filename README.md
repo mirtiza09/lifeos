@@ -1,74 +1,77 @@
-# Life OS
+# Life OS Dashboard
 
-A dynamic personal Life OS dashboard that transforms productivity tracking into an engaging, adaptive user experience through intelligent design and interactive features.
+A dynamic personal dashboard app that transforms productivity tracking into an engaging, adaptive user experience through intelligent design and interactive features.
 
 ## Features
 
-- **Habit Tracking**: Track daily and weekly habits with boolean or counter-based completion
-- **Task Management**: Simple to-do list functionality
-- **Life Category Notes**: Organize notes by life categories (Health, Career, Finances, Personal)
-- **Offline Support**: IndexedDB for local storage with background synchronization
-- **Authentication**: PIN/passcode-based authentication with device-specific verification
+- Task management with completion tracking
+- Habit tracking (daily and weekly) with both boolean and counter types
+- Life category notes with Markdown support for Health, Career, Finances, and Personal areas
+- Offline support with data synchronization
+- Responsive design for desktop and mobile
+- PostgreSQL database for persistent data storage
 
-## Getting Started
+## Architecture
 
-### Prerequisites
+This is a full-stack JavaScript application with:
+- React frontend (built with Vite)
+- Express.js backend
+- PostgreSQL database for data persistence
 
-- Node.js 18+
-- npm or yarn
+For more detailed information on the architecture, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
-### Installation
+## Local Development
 
 1. Clone the repository
 2. Install dependencies:
    ```
    npm install
    ```
-3. Create a `.env` file based on `.env.example`
-4. Start the development server:
+3. Start the development server:
    ```
    npm run dev
    ```
 
-## Authentication
+## Database Setup
 
-The application uses a passcode-based authentication system. By default, the passcode is set to `6969`. You can change this by modifying the following environment variables:
+The application is configured to use PostgreSQL for data persistence:
 
-- `DEFAULT_PASSCODE`: Controls the server-side default passcode
-- `VITE_DEFAULT_PASSCODE`: Controls the client-side default passcode for offline mode
-
-These variables can be set in:
-
-- `.env` file for local development
-- `netlify.toml` in the `[build.environment]` section for deployment
+1. Make sure you have a PostgreSQL database connection string available
+2. Add it to your environment variables as `DATABASE_URL`
+3. Run database migration:
+   ```
+   npm run db:push
+   ```
 
 ## Deployment
 
-The application is configured for deployment on Netlify:
+### Option 1: Netlify (Frontend) + Separate Backend
 
-1. Connect your repository to Netlify
-2. Configure the build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-3. Add environment variables in the Netlify dashboard or use the `netlify.toml` file
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-## Technologies Used
+1. Deploy the frontend to Netlify using the provided `netlify.toml` configuration
+2. Deploy the backend to a service like Railway (recommended), Render, or Fly.io
+3. Set the `VITE_API_URL` environment variable in Netlify to point to your backend URL
 
-- React
-- TypeScript
-- Tailwind CSS
-- Express
-- Vite
-- IndexedDB
-- Markdown
-- Shadcn UI
-- Drizzle ORM
-- Netlify
+### Option 2: Vercel (Full Stack Serverless)
 
-## Architecture
+See [DEPLOYMENT-VERCEL.md](./DEPLOYMENT-VERCEL.md) for Vercel-specific instructions.
 
-See [architecture.md](./architecture.md) for a detailed overview of the application architecture.
+1. Push your code to GitHub
+2. Import your project into Vercel
+3. Set environment variables for your PostgreSQL database
+4. Deploy with a single click
+
+### Option 3: Deploy to Replit
+
+1. Use the "Deploy" button in your Replit project
+2. No architectural changes required for this option
+
+## Environment Variables
+
+- `DATABASE_URL`: PostgreSQL connection string
+- `VITE_API_URL`: (Frontend only) URL to your backend API server
 
 ## License
 
-This project is licensed under the MIT License.
+MIT
