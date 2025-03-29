@@ -1,0 +1,43 @@
+{
+  "date": "2025-03-28T20:36:06.755Z",
+  "completed": [
+    {
+      "text": "Do Laundry",
+      "completed": true,
+      "createdAt": "2025-03-28T20:16:52.105Z",
+      "userId": null,
+      "id": 2
+    },
+    {
+      "text": "Website Finalise",
+      "completed": true,
+      "createdAt": "2025-03-28T20:16:52.105Z",
+      "userId": null,
+      "id": 3
+    },
+    {
+      "text": "Test persistence task",
+      "completed": true,
+      "createdAt": "2025-03-28T20:17:30.000Z",
+      "userId": null,
+      "id": 5
+    }
+  ],
+  "pending": [
+    {
+      "text": "Buy Shampoo + Laundry + Tissues + Supplement",
+      "completed": false,
+      "createdAt": "2025-03-28T20:16:52.104Z",
+      "userId": null,
+      "id": 1
+    },
+    {
+      "text": "Buy Nailcutter",
+      "completed": false,
+      "createdAt": "2025-03-28T20:16:52.105Z",
+      "userId": null,
+      "id": 4
+    }
+  ],
+  "completionRate": 0.6
+}

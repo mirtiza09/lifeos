@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = "dist/public"
+  functions = "functions"
+
+[dev]
+  command = "npm run dev"
+  port = 5000
+  targetPort = 5000
+
+# Environment variables for production
+[build.environment]
+  DEFAULT_PASSCODE = "6969"
+  VITE_DEFAULT_PASSCODE = "6969"
+
+# Environment variables for the Netlify local development environment
+[context.dev.environment]
+  DEFAULT_PASSCODE = "6969"
+  VITE_DEFAULT_PASSCODE = "6969"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
