@@ -4,6 +4,8 @@ import { setupDatabase, migrateData } from './server/migrateToPostgres';
 // Force environment variables
 process.env.MIGRATE_DATA = 'true';
 process.env.USE_POSTGRES = 'true';
+// Make sure MIGRATION_COMPLETED is not set when running this script explicitly
+delete process.env.MIGRATION_COMPLETED;
 
 async function runMigration() {
   try {

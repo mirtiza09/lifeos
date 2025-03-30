@@ -41,12 +41,20 @@ app.use((req, res, next) => {
   // Setup database tables if using PostgreSQL
   if (process.env.DATABASE_URL) {
     try {
-      log('Setting up database tables...');
-      await setupDatabase();
-      log('Database tables setup completed.');
-      
-      // Database setup completed - no migration in normal startup
-      log('Database ready to use.');
+      // Skip migration if MIGRATION_COMPLETED is set to prevent loops in deployment
+      if (process.env.MIGRATION_COMPLETED === 'true') {
+        log('Migration already completed, skipping database setup');
+      } else {
+        log('Setting up database tables...');
+        await setupDatabase();
+        log('Database tables setup completed.');
+        
+        // Set environment variable to prevent future migrations
+        process.env.MIGRATION_COMPLETED = 'true';
+        
+        // Database setup completed - no migration in normal startup
+        log('Database ready to use.');
+      }
     } catch (error) {
       log(`Error during database setup/migration: ${error}`);
     }

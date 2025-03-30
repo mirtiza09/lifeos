@@ -10,6 +10,9 @@ fi
 # Set platform identification
 export DEPLOYMENT_PLATFORM=render
 
+# Prevent migration loop by creating a marker file
+export MIGRATION_COMPLETED=true
+
 # Log platform and environment information
 echo "Starting LifeOS application..."
 echo "Platform: $DEPLOYMENT_PLATFORM"

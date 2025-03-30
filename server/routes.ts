@@ -6,6 +6,12 @@ import { z } from "zod";
 
 // Helper function to check if it's a new day and log data if needed
 async function checkAndLogDailyData() {
+  // Skip if MIGRATION_COMPLETED is true to prevent redundant operations
+  if (process.env.MIGRATION_COMPLETED === 'true') {
+    console.log('MIGRATION_COMPLETED flag is set, skipping automatic daily data check');
+    return;
+  }
+  
   try {
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     
@@ -49,8 +55,12 @@ async function checkAndLogDailyData() {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up a daily log check at server startup
-  checkAndLogDailyData();
+  // Set up a daily log check at server startup only if we're not running with MIGRATION_COMPLETED flag
+  if (process.env.MIGRATION_COMPLETED !== 'true') {
+    checkAndLogDailyData();
+  } else {
+    console.log('MIGRATION_COMPLETED flag is set, skipping automatic daily data check in registerRoutes');
+  }
   
   // Platform compatibility - route /.netlify/functions/* to /api/*
   // This is needed for compatibility with Netlify and Render deployments
@@ -81,6 +91,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         node_env: process.env.NODE_ENV || 'development',
         platform: process.env.DEPLOYMENT_PLATFORM || 'unknown',
         database_connected: !!process.env.DATABASE_URL,
+        migration_completed: process.env.MIGRATION_COMPLETED === 'true',
         timestamp: new Date().toISOString(),
         request_path: req.path,
         request_url: req.url,

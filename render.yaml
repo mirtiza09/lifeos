@@ -22,6 +22,8 @@ services:
         sync: false # Do not sync with repo - set manually in Render dashboard
       - key: DEPLOYMENT_PLATFORM
         value: render
+      - key: MIGRATION_COMPLETED
+        value: true
     # Routes configuration for the service
     routes:
       - type: rewrite
