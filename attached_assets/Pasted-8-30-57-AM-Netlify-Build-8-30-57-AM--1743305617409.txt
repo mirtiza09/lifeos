@@ -1,0 +1,127 @@
+8:30:57 AM: Netlify Build                                                 
+8:30:57 AM: ────────────────────────────────────────────────────────────────
+8:30:57 AM: ​
+8:30:57 AM: ❯ Version
+8:30:57 AM:   @netlify/build 30.0.6
+8:30:57 AM: ​
+8:30:57 AM: ❯ Flags
+8:30:57 AM:   accountId: 6277f934281d786fcba56f61
+8:30:57 AM:   baseRelDir: true
+8:30:57 AM:   buildId: 67e8bad25fb2100008c86aa1
+8:30:57 AM:   deployId: 67e8bad25fb2100008c86aa3
+8:30:57 AM: ​
+8:30:57 AM: ❯ Current directory
+8:30:57 AM:   /opt/build/repo
+8:30:57 AM: ​
+8:30:57 AM: ❯ Config file
+8:30:57 AM:   /opt/build/repo/netlify.toml
+8:30:57 AM: ​
+8:30:57 AM: ❯ Context
+8:30:57 AM:   production
+8:30:57 AM: ​
+8:30:57 AM: build.command from netlify.toml                               
+8:30:57 AM: ────────────────────────────────────────────────────────────────
+8:30:57 AM: ​
+8:30:57 AM: $ bash build-for-netlify.sh
+8:30:57 AM: > rest-express@1.0.0 build
+8:30:57 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+8:30:57 AM: vite v5.4.14 building for production...
+8:30:57 AM: transforming...
+8:31:02 AM: ✓ 3093 modules transformed.
+8:31:02 AM: rendering chunks...
+8:31:02 AM: computing gzip size...
+8:31:02 AM: ../dist/public/index.html                     1.84 kB │ gzip:   0.72 kB
+8:31:02 AM: ../dist/public/assets/index-XSWH6ygP.css     81.99 kB │ gzip:  13.33 kB
+8:31:02 AM: ../dist/public/assets/index-DVEuQG2z.js   1,026.40 kB │ gzip: 295.02 kB
+8:31:02 AM: 
+8:31:02 AM: (!) Some chunks are larger than 500 kB after minification. Consider:
+8:31:02 AM: - Using dynamic import() to code-split the application
+8:31:02 AM: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+8:31:02 AM: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+8:31:02 AM: ✓ built in 4.71s
+8:31:02 AM:   dist/index.js  52.3kb
+8:31:02 AM: ⚡ Done in 4ms
+8:31:02 AM: Starting Netlify Functions build process...
+8:31:02 AM: Bundling shared API utilities...
+8:31:02 AM: Created Netlify function: analytics
+8:31:02 AM: Created Netlify function: day-start-time
+8:31:02 AM: Created Netlify function: habits
+8:31:02 AM: Created Netlify function: log-daily-data
+8:31:02 AM: Created Netlify function: migrate
+8:31:02 AM: Created Netlify function: netlify-adapter
+8:31:02 AM: Created Netlify function: settings
+8:31:02 AM: Created Netlify function: tasks
+8:31:02 AM: netlify-build.sh: line 52: local: can only be used in a function
+8:31:02 AM: netlify-build.sh: line 53: local: can only be used in a function
+8:31:02 AM: netlify-build.sh: line 56: local: can only be used in a function
+8:31:02 AM: mkdir: missing operand
+8:31:02 AM: Try 'mkdir --help' for more information.
+8:31:02 AM: netlify-build.sh: line 60: /index.js: Permission denied
+8:31:02 AM: Created Netlify function for nested API:
+8:31:02 AM: netlify-build.sh: line 52: local: can only be used in a function
+8:31:02 AM: netlify-build.sh: line 53: local: can only be used in a function
+8:31:02 AM: netlify-build.sh: line 56: local: can only be used in a function
+8:31:02 AM: mkdir: missing operand
+8:31:02 AM: Try 'mkdir --help' for more information.
+8:31:02 AM: netlify-build.sh: line 60: /index.js: Permission denied
+8:31:02 AM: Created Netlify function for nested API:
+8:31:02 AM: netlify-build.sh: line 52: local: can only be used in a function
+8:31:02 AM: netlify-build.sh: line 53: local: can only be used in a function
+8:31:02 AM: netlify-build.sh: line 56: local: can only be used in a function
+8:31:02 AM: mkdir: missing operand
+8:31:02 AM: Try 'mkdir --help' for more information.
+8:31:02 AM: netlify-build.sh: line 60: /index.js: Permission denied
+8:31:02 AM: Created Netlify function for nested API:
+8:31:02 AM: Netlify Functions build process complete.
+8:31:02 AM: Build for Netlify completed successfully
+8:31:02 AM: ​
+8:31:02 AM: (build.command completed in 5.1s)
+8:31:02 AM: ​
+8:31:02 AM: Functions bundling                                            
+8:31:02 AM: ────────────────────────────────────────────────────────────────
+8:31:02 AM: ​
+8:31:02 AM: Packaging Functions from netlify/functions directory:
+8:31:02 AM:  - analytics/index.js
+8:31:02 AM:  - day-start-time/index.js
+8:31:02 AM:  - habits/index.js
+8:31:02 AM:  - log-daily-data/index.js
+8:31:02 AM:  - migrate/index.js
+8:31:02 AM:  - netlify-adapter/index.js
+8:31:02 AM:  - settings/index.js
+8:31:02 AM:  - tasks/index.js
+8:31:02 AM: ​
+8:31:02 AM: ​
+8:31:02 AM: Dependencies installation error                               
+8:31:02 AM: ────────────────────────────────────────────────────────────────
+8:31:02 AM: ​
+8:31:02 AM:   Error message
+8:31:02 AM:   A Netlify Function failed to require one of its dependencies.
+8:31:02 AM:   Please make sure it is present in the site's top-level "package.json".
+​
+8:31:02 AM:   In file "/opt/build/repo/netlify/functions/analytics/index.js"
+8:31:02 AM:   Cannot find module '@netlify/functions'
+8:31:02 AM:   Require stack:
+8:31:02 AM:   - /opt/buildhome/node-deps/node_modules/@netlify/zip-it-and-ship-it/dist/runtimes/node/bundlers/zisi/resolve.js
+8:31:02 AM: ​
+8:31:02 AM:   Resolved config
+8:31:02 AM:   build:
+8:31:02 AM:     command: bash build-for-netlify.sh
+8:31:02 AM:     commandOrigin: config
+8:31:02 AM:     environment:
+8:31:02 AM:       - DATABASE_URL
+8:31:02 AM:       - DEFAULT_PASSCODE
+8:31:02 AM:     publish: /opt/build/repo/dist/public
+8:31:02 AM:     publishOrigin: config
+8:31:02 AM:   functionsDirectory: /opt/build/repo/netlify/functions
+8:31:02 AM:   redirects:
+8:31:03 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+8:31:03 AM:     - from: /api/*
+      status: 200
+      to: /.netlify/functions/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+8:31:03 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+8:31:03 AM: Failing build: Failed to build site
+8:31:03 AM: Finished processing build request in 24.808s

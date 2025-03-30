@@ -20,21 +20,24 @@ To run the application locally for development:
    ```
    npm run dev
    ```
-5. The application will be available at `http://localhost:3000`
+5. The application will be available at `http://localhost:5000`
 
-## Production Deployment
+## Production Deployment with Netlify
 
-For production deployment, you have several options:
+LifeOS is optimized for deployment on Netlify using their serverless Functions architecture.
 
-### Option 1: Vercel (Recommended for simplicity)
-
-See detailed instructions in [DEPLOYMENT-VERCEL.md](./DEPLOYMENT-VERCEL.md)
-
-### Option 2: Netlify
+### Netlify Deployment (Recommended)
 
 See detailed instructions in [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md)
 
-### Option 3: Self-hosted Server
+The application includes:
+- Preconfigured `netlify.toml` for automatic setup
+- Build scripts that prepare API endpoints as Netlify Functions
+- Client-side adapter for proper API routing
+
+### Alternative: Self-hosted Server
+
+If you prefer to self-host:
 
 1. Build the application:
    ```
@@ -56,8 +59,11 @@ See detailed instructions in [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md)
 
 The application requires a PostgreSQL database. You can use:
 
-1. A local PostgreSQL installation
-2. A managed PostgreSQL service like [Neon](https://neon.tech), [Supabase](https://supabase.com), or [Render](https://render.com)
+1. A local PostgreSQL installation for development
+2. A managed PostgreSQL service for production:
+   - [Neon](https://neon.tech) (recommended, works well with Netlify)
+   - [Supabase](https://supabase.com)
+   - [Railway](https://railway.app)
 
 Make sure to set the `DATABASE_URL` environment variable to point to your database.
 
@@ -73,36 +79,49 @@ This will create/update the database schema based on your Drizzle models.
 
 ## Environment Variables
 
-The following environment variables are required:
+The following environment variable is required:
 
 - `DATABASE_URL`: PostgreSQL connection string
 
-Optional environment variables:
+Optional environment variables for local development:
 
-- `PORT`: The port the server will listen on (defaults to 3000)
+- `PORT`: The port the server will listen on (defaults to 5000)
 - `NODE_ENV`: Set to `production` for production mode
 
 ## Deployment Checklist
 
 Before deploying to production, make sure to:
 
-1. Build the application in production mode
-2. Set all required environment variables
-3. Ensure the database is properly set up and migrated
-4. Configure proper error logging
-5. Set up HTTPS if not provided by your hosting platform
-6. Test all functionalities after deployment
+1. Push your code to a Git repository (GitHub, GitLab, etc.)
+2. Connect your repository to Netlify
+3. Set the required `DATABASE_URL` environment variable in Netlify
+4. Deploy with the default settings from `netlify.toml`
+
+## Deployment Architecture
+
+The application uses a modern deployment architecture:
+
+1. **Frontend**: Static files served from Netlify's global CDN
+2. **Backend**: API endpoints served as Netlify Functions
+3. **Database**: PostgreSQL database connected via `DATABASE_URL`
+4. **Routing**: API requests automatically routed from `/api/*` to Netlify Functions
 
 ## Troubleshooting
 
 Common deployment issues:
 
-1. **Database connection errors**: Verify your `DATABASE_URL` is correct and that the database is accessible from your hosting environment.
+1. **Database connection errors**: 
+   - Verify your `DATABASE_URL` is correct
+   - Make sure your database allows connections from Netlify's IP addresses
+   - Check Netlify Function logs for specific error messages
 
-2. **Build failures**: Check that all dependencies are properly installed and compatible.
+2. **API errors (404)**: 
+   - Verify the build completed successfully
+   - Check that Netlify Functions were created properly
+   - Look for routing issues in the Function logs
 
-3. **API errors**: Check the server logs for detailed error messages.
+3. **Frontend not loading**: 
+   - Check that static files were built and deployed correctly
+   - Verify the Netlify adapter script is included in the HTML
 
-4. **Frontend not loading**: Verify that static files are being served correctly.
-
-For more specific troubleshooting, refer to the documentation for your hosting platform.
+For more specific troubleshooting, refer to the [Netlify documentation](https://docs.netlify.com/troubleshooting/common-issues/).

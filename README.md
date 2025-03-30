@@ -45,32 +45,25 @@ The application is configured to use PostgreSQL for data persistence:
 
 ## Deployment
 
-### Option 1: Netlify (Frontend) + Separate Backend
+### Deploy to Netlify (Full Stack Serverless)
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
-
-1. Deploy the frontend to Netlify using the provided `netlify.toml` configuration
-2. Deploy the backend to a service like Railway (recommended), Render, or Fly.io
-3. Set the `VITE_API_URL` environment variable in Netlify to point to your backend URL
-
-### Option 2: Vercel (Full Stack Serverless)
-
-See [DEPLOYMENT-VERCEL.md](./DEPLOYMENT-VERCEL.md) for Vercel-specific instructions.
+See [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md) for detailed deployment instructions.
 
 1. Push your code to GitHub
-2. Import your project into Vercel
+2. Import your project into Netlify using the provided `netlify.toml` configuration
 3. Set environment variables for your PostgreSQL database
 4. Deploy with a single click
 
-### Option 3: Deploy to Replit
+The application is configured to automatically handle API routing through Netlify Functions, so no additional configuration is needed.
+
+### Alternative: Deploy to Replit
 
 1. Use the "Deploy" button in your Replit project
 2. No architectural changes required for this option
 
 ## Environment Variables
 
-- `DATABASE_URL`: PostgreSQL connection string
-- `VITE_API_URL`: (Frontend only) URL to your backend API server
+- `DATABASE_URL`: PostgreSQL connection string (required for production)
 
 ## License
 

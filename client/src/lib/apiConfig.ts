@@ -3,11 +3,11 @@
 
 // Get the API URL from environment variables, with a fallback for development
 // Deployment notes:
-// - When deploying to Netlify, set VITE_API_URL in the Netlify environment settings to point to your backend
-// - When deploying to Vercel as a full-stack app, this can remain as default
-// - When using Replit deployment, this can remain as default
+// - In development, API requests use relative URLs to the local development server
+// - When deploying to Netlify with serverless functions, the netlify-adapter.js handles
+//   rewriting API calls to use the /.netlify/functions path
 const API_URL = import.meta.env.VITE_API_URL || '';
 
-// If API_URL is empty, we're either in development mode or using a unified deployment (Vercel/Replit)
-// In those cases, API requests will use relative URLs which will work correctly
+// API_URL will be empty for local development and will be automatically
+// transformed by netlify-adapter.js when deployed to Netlify
 export default API_URL;

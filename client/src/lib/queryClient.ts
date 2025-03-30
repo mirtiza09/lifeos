@@ -19,8 +19,14 @@ export async function apiRequest(
   const data = options?.data;
   
   try {
-    // Prepend API_URL if needed
-    const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
+    // Use Netlify Functions path if defined by adapter
+    const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
+    
+    // Prepend API_URL or BASE_URL if needed
+    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+    
+    console.log(`Making API request to: ${fullUrl} (method: ${method})`);
+    
     const res = await fetch(fullUrl, {
       method,
       headers: data ? { "Content-Type": "application/json" } : {},
@@ -54,8 +60,16 @@ export const getQueryFn = <TData>(options: {
     try {
       const url = queryKey[0] as string;
       
+      // Use Netlify Functions path if defined by adapter
+      const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
+      
       // Construct full URL
-      const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
+      const fullUrl = url.startsWith('http') 
+        ? url 
+        : `${baseUrl}${url}`;
+        
+      console.log(`Making API request to: ${fullUrl}`);
+      
       const res = await fetch(fullUrl, {
         credentials: "include",
       });

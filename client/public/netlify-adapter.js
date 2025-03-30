@@ -1,22 +1,50 @@
-// Netlify adapter script
-// This script is meant to be included in the HTML file when deployed to Netlify
-// It helps with environment detection and API routing
+/**
+ * Netlify Adapter Script
+ * 
+ * This script enhances the application when deployed to Netlify by:
+ * 1. Detecting if running in a Netlify production environment (including custom domains)
+ * 2. Rewriting API calls from standard paths (/api/*) to Netlify Functions paths (/.netlify/functions/*)
+ * 3. Setting up global configuration variables for the application
+ */
 
 (function() {
-  // Detect if we are on Netlify production
-  const isNetlifyProduction = window.location.hostname.includes('netlify.app') || 
-                             document.location.hostname.endsWith('.netlify.app');
-  
-  if (isNetlifyProduction) {
-    // Create a global variable to indicate we're on Netlify
-    window.DEPLOYMENT_PLATFORM = 'netlify';
+  // Enhanced Netlify detection logic
+  function detectNetlifyEnvironment() {
+    // Local development check
+    const isLocalDevelopment = window.location.hostname.includes('localhost') || 
+                               window.location.hostname.includes('127.0.0.1');
     
-    // Set API base URL to use the Netlify Functions path for API requests
+    // Explicit Netlify environment indicators (works for both *.netlify.app and custom domains)
+    const hasNetlifyHeaders = document.querySelector('meta[name="x-netlify"]') !== null;
+    const isNetlifyDomain = window.location.hostname.includes('.netlify.app');
+    const hasNetlifyEnvVar = typeof window.NETLIFY !== 'undefined';
+    
+    // Netlify sets this cookie on their infrastructure
+    const hasNetlifyCookie = document.cookie.includes('nf_');
+    
+    // Check URL for Netlify preview information
+    const urlParams = new URLSearchParams(window.location.search);
+    const isNetlifyPreview = urlParams.has('_netlifyDeployID') || urlParams.has('netlify');
+    
+    // Fallback to production assumption for custom domains
+    const productionFallback = !isLocalDevelopment;
+    
+    // Return true if any Netlify indicators are present
+    return isNetlifyDomain || hasNetlifyHeaders || hasNetlifyEnvVar || 
+           hasNetlifyCookie || isNetlifyPreview || productionFallback;
+  }
+  
+  // Determine if we're running on Netlify
+  const isNetlifyEnvironment = detectNetlifyEnvironment();
+  
+  if (isNetlifyEnvironment) {
+    // Set global configuration for the application
+    window.DEPLOYMENT_PLATFORM = 'netlify';
     window.API_BASE_URL = '/.netlify/functions';
     
-    console.log('Netlify deployment detected - API requests will use /.netlify/functions path');
+    console.log('Netlify environment detected - API requests will use /.netlify/functions path');
     
-    // Patch the fetch API to rewrite API calls
+    // Patch all API request methods to use Netlify Functions path
     const originalFetch = window.fetch;
     window.fetch = function(url, options) {
       let newUrl = url;
@@ -25,10 +53,25 @@
       if (typeof url === 'string' && url.startsWith('/api')) {
         // Replace /api with /.netlify/functions
         newUrl = url.replace(/^\/api/, '/.netlify/functions');
-        console.log(`Rewriting API request from ${url} to ${newUrl}`);
+        console.log(`Rewriting API request: ${url} → ${newUrl}`);
       }
       
       return originalFetch.call(this, newUrl, options);
     };
+    
+    // Create a global helper for API URL conversion
+    window.getNetlifyFunctionUrl = function(apiPath) {
+      if (apiPath.startsWith('/api')) {
+        return apiPath.replace(/^\/api/, '/.netlify/functions');
+      }
+      return apiPath;
+    };
+    
+    // Add a meta tag to indicate Netlify deployment 
+    // This helps with environment detection for other scripts
+    const meta = document.createElement('meta');
+    meta.name = 'deployment-platform';
+    meta.content = 'netlify';
+    document.head.appendChild(meta);
   }
 })();

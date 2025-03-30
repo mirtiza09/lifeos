@@ -1,16 +1,38 @@
 [build]
-  command = "npm run build"
+  command = "bash build-for-netlify.sh"
   publish = "dist/public"
   functions = "netlify/functions"
+  node_bundler = "esbuild"
 
-# Handle API routes
+# Environment variable configuration
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+# Function settings and bundling configuration
+[functions]
+  # Define the directory where Netlify functions are stored
+  directory = "netlify/functions"
+  # Node.js version for function runtime (min v18 for Fetch API support)
+  node_bundler = "esbuild"
+  # External dependencies that shouldn't be bundled
+  external_node_modules = ["@netlify/functions"]
+
+# Handle API routes - ensure they're properly routed to Netlify Functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+  force = true
 
-# SPA fallback
+# SPA fallback - ensure all other routes are handled by the single-page application
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Dev settings for local development
+[dev]
+  command = "npm run dev"
+  port = 5000
+  targetPort = 5000
