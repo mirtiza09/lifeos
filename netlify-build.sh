@@ -43,6 +43,22 @@ mkdir -p netlify/functions/_shared
 cp api/_storage.js netlify/functions/_shared/
 cp api/_error-handler.js netlify/functions/_shared/
 cp api/netlify-adapter.js netlify/functions/_shared/
+cp api/pg-netlify-adapter.js netlify/functions/_shared/
+
+# Ensure pg dependency is available for PostgreSQL connections
+# We're using the package.json in netlify/api for module resolution
+echo "Ensuring PostgreSQL dependencies are available..."
+if ! grep -q "pg" netlify/api/package.json; then
+  # Update the package.json to include the pg dependency
+  sed -i 's/"version": "1.0.0"/"version": "1.0.0",\n  "dependencies": {\n    "pg": "^8.11.3"\n  }/g' netlify/api/package.json
+fi
+
+# Log DATABASE_URL presence (without revealing it)
+if [ -n "$DATABASE_URL" ]; then
+  echo "DATABASE_URL environment variable is present (length: ${#DATABASE_URL})"
+else
+  echo "WARNING: DATABASE_URL environment variable is not set. PostgreSQL connections will fail."
+fi
 
 # Create a helper to generate modern Netlify function wrapper for each API
 function create_netlify_function() {
@@ -263,10 +279,25 @@ done
 # - habits/[id]/operations/reset.js (deeply nested)
 echo "Processing nested API endpoints..."
 
+# Debug: Check what nested API files are found
+echo "Debug: Found nested API files:"
+find api -type f -name "*.js" | grep "/" | grep -v "api/[^/]*\.js$"
+
+# Ensure specific important endpoints are definitely created
+# This ensures critical endpoints like notes/category/[category].js are not missed
+for critical_endpoint in "notes/category/[category].js"; do
+  if [ -f "api/$critical_endpoint" ]; then
+    echo "Ensuring critical endpoint is created: $critical_endpoint"
+    create_nested_netlify_function "api/$critical_endpoint"
+  else
+    echo "Warning: Critical endpoint file not found: api/$critical_endpoint"
+  fi
+done
+
 # Use find to discover all JS files in subdirectories of api/
 # Note: We need to find any JS file that's not at the top level of the api/ directory
 find api -type f -name "*.js" | grep "/" | grep -v "api/[^/]*\.js$" | while read -r nested_file; do
-  if [[ "$nested_file" != *"_"* && "$nested_file" != *"netlify-adapter.js" ]]; then
+  if [[ "$nested_file" != *"_"* && "$nested_file" != *"netlify-adapter.js" && "$nested_file" != *"pg-netlify-adapter.js" ]]; then
     # Only process actual endpoints, not utility files
     create_nested_netlify_function "$nested_file"
   fi

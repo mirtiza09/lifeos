@@ -1,0 +1,126 @@
+The Issue: Deployment Failure Due to Invalid Function Names
+Your build process is succeeding—congratulations on getting that far! However, the deployment to Netlify is failing with the following error:
+
+text
+
+Collapse
+
+Wrap
+
+Copy
+** ERROR **
+The following serverless functions failed to deploy: habits-[id], tasks-[id]
+To deploy these functions successfully, change the function names to contain only alphanumeric characters, hyphens or underscores
+This means that while your application builds correctly, Netlify rejects two of your serverless Functions (habits-[id] and tasks-[id]) during deployment because their names contain square brackets ([ ]), which violate Netlify’s naming rules.
+
+Why This Is Happening
+Netlify Functions must follow strict naming conventions:
+
+Allowed characters: Alphanumeric characters (letters and numbers), hyphens (-), and underscores (_).
+Disallowed characters: Special characters like square brackets ([ ]), which your current Function names include.
+In your build output, you can see that your build-for-netlify.sh script generates Functions with names like habits-[id] and tasks-[id]:
+
+text
+
+Collapse
+
+Wrap
+
+Copy
+Created modern Netlify function for nested API: habits-[id] with path: /api/habits/:$1.js
+Created modern Netlify function for nested API: tasks-[id] with path: /api/tasks/:$1.js
+These names are likely derived from your nested API route structure (e.g., habits/[id].js), but Netlify doesn’t allow the brackets in the Function names themselves, even if they make sense for your routing logic.
+
+How to Fix It
+To resolve this, you need to adjust your build script (build-for-netlify.sh) to generate Function names that comply with Netlify’s rules, while still preserving your dynamic routing functionality. Here’s a step-by-step solution:
+
+1. Modify Function Names in build-for-netlify.sh
+Current Behavior: Your script creates Functions named habits-[id] and tasks-[id] based on nested routes.
+Fix: Replace the square brackets with a compliant character, such as a hyphen (-) or underscore (_). For example, rename habits-[id] to habits-id or habits_id.
+Example Adjustment:
+Locate the part of your build-for-netlify.sh script that generates these Function names. It might look something like this:
+
+bash
+
+Collapse
+
+Wrap
+
+Copy
+# Example snippet from build-for-netlify.sh
+for route in api/*; do
+  if [[ -d "$route" ]]; then
+    func_name=$(basename "$route")
+    # Current output: habits-[id]
+    # Replace [ and ] with nothing or a hyphen/underscore
+    func_name=${func_name//[/}
+    func_name=${func_name//]/}
+    # Result: habits-id
+    echo "Created modern Netlify function: $func_name"
+    # Continue with Function generation...
+  fi
+done
+After this change, your Functions will be named habits-id and tasks-id instead of habits-[id] and tasks-[id].
+
+2. Update Netlify Routing Configuration
+Netlify Functions don’t need their names to match the URL path exactly—routing is handled separately via netlify.toml or redirects. Update your configuration to map the new Function names to the correct API paths.
+
+Option A: Use netlify.toml:
+Add or update the [[redirects]] section in your netlify.toml:
+
+toml
+
+Collapse
+
+Wrap
+
+Copy
+[[redirects]]
+  from = "/api/habits/:id"
+  to = "/.netlify/functions/habits-id"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/tasks/:id"
+  to = "/.netlify/functions/tasks-id"
+  status = 200
+  force = true
+This tells Netlify to route requests like /api/habits/123 to the habits-id Function, passing 123 as a parameter.
+
+Option B: Inline Routing in Build Script:
+If your script dynamically generates routing, ensure it maps the new Function names to the correct paths. For example:
+
+text
+
+Collapse
+
+Wrap
+
+Copy
+Created modern Netlify function: habits-id with path: /api/habits/:id
+Created modern Netlify function: tasks-id with path: /api/tasks/:id
+3. Handle Dynamic Parameters in Function Code
+Ensure your Function code can access the id parameter from the request. For a Function named habits-id, the code might look like this:
+
+javascript
+
+Collapse
+
+Wrap
+
+Copy
+// netlify/functions/habits-id/index.js
+export default async (req, context) => {
+  const id = context.params.id; // Access the :id parameter from the URL
+  return new Response(`Habit ID: ${id}`, { status: 200 });
+};
+The context.params.id value will be populated based on the URL (e.g., 123 from /api/habits/123), thanks to the redirect configuration.
+
+4. Test Locally
+Before redeploying, verify the changes:
+
+Run bash build-for-netlify.sh locally.
+Check the netlify/functions/ directory—ensure you see habits-id and tasks-id instead of habits-[id] and tasks-[id].
+Use netlify dev to start a local server.
+Test a request like http://localhost:8888/api/habits/123. Confirm the habits-id Function handles it and context.params.id equals 123.
