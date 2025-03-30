@@ -47,6 +47,8 @@ The application is configured to use PostgreSQL for data persistence:
 
 ### Deploy to Netlify (Full Stack Serverless)
 
+The application now has enhanced Netlify serverless Functions support for reliable deployment.
+
 See [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md) for detailed deployment instructions.
 
 1. Push your code to GitHub
@@ -54,7 +56,15 @@ See [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md) for detailed deployment ins
 3. Set environment variables for your PostgreSQL database
 4. Deploy with a single click
 
-The application is configured to automatically handle API routing through Netlify Functions, so no additional configuration is needed.
+#### Netlify-specific Features
+
+- **Modern Netlify Functions**: Uses the latest Netlify Functions API for better performance
+- **Automatic API Routing**: API requests are routed through Netlify Functions with zero configuration
+- **Zero-config Deployment**: The `netlify.toml` file and build scripts handle all deployment configuration
+- **Path-based Routing**: Each API endpoint gets its own function with proper path configuration
+- **Default Exports**: All utility modules include necessary default exports for Netlify compatibility
+
+The application is fully optimized for Netlify's serverless architecture, creating a seamless deployment experience.
 
 ### Alternative: Deploy to Replit
 

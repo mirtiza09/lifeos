@@ -10,6 +10,17 @@
  * 4. Complete implementation of the storage interface
  */
 
+/**
+ * Default export handler for Netlify Functions compatibility
+ * This empty handler is required for the Netlify Function wrapper to work correctly
+ */
+export default async function handler(req, res) {
+  res.status(200).json({ 
+    message: "This is a utility module and shouldn't be called directly",
+    success: true
+  });
+}
+
 // In-memory storage maps
 const tasksMap = new Map();
 const habitsMap = new Map();

@@ -5,6 +5,17 @@
  * across all API endpoints, making it easier to maintain consistent error responses.
  * These utilities are compatible with both Express-style handlers and modern Netlify Functions.
  */
+
+/**
+ * Default export handler for Netlify Functions compatibility
+ * This empty handler is required for the Netlify Function wrapper to work correctly
+ */
+export default async function handler(req, res) {
+  res.status(200).json({ 
+    message: "This is a utility module and shouldn't be called directly",
+    success: true
+  });
+}
 export function withErrorHandler(handler) {
   return async function (req, res) {
     try {

@@ -6,6 +6,17 @@
  * ensuring consistent behavior between development and production.
  */
 
+/**
+ * Default export handler for Netlify Functions compatibility
+ * This empty handler is required for the Netlify Function wrapper to work correctly
+ */
+export default async function handler(req, res) {
+  res.status(200).json({ 
+    message: "This is a utility module and shouldn't be called directly",
+    success: true
+  });
+}
+
 // Import the Netlify storage implementation
 import { netlifyStorage } from './netlify-adapter';
 

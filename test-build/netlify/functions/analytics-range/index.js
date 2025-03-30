@@ -1,6 +1,7 @@
-// Modern Netlify Function wrapper for test API
+// Modern Netlify Function wrapper for nested API: analytics/range.js
 import { Context } from "@netlify/functions";
-import originalHandler from "../../netlify/api/test.js";
+// Fix: Use absolute path reference for reliable imports
+import originalHandler from "../../../netlify/api/analytics/range.js";
 
 // Express adapter to convert Request/Response objects
 const expressToNetlify = async (req, context) => {
@@ -65,5 +66,5 @@ export default async (req, context) => {
 
 // Configure routing
 export const config = {
-  path: "/api/test"
+  path: "/api/analytics/range.js"
 };

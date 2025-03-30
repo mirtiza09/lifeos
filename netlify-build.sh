@@ -1,33 +1,46 @@
 #!/bin/bash
 # Netlify build script to prepare API endpoints as Netlify Functions
-# Updated to use the new modern Netlify Functions API
+# Completely rewritten to fix path issues and ensure correct imports
 
 echo "Starting Netlify Functions build process..."
 
-# Create netlify/functions directory if it doesn't exist
+# Create directories
 mkdir -p netlify/functions
-
-# Copy the entire API directory to ensure all handlers are available
-echo "Copying API files to Netlify build directory..."
 mkdir -p netlify/api
+mkdir -p netlify/api/habits
+mkdir -p netlify/api/analytics
+mkdir -p netlify/api/tasks
+mkdir -p netlify/api/notes
+
+# The main issue is that the API handlers need to be properly copied and referenced
+# Copy ALL api files to netlify/api/ - this is crucial!
+echo "Copying API files to build location..."
 cp -r api/* netlify/api/
 
-# Bundle the shared API utilities
-echo "Bundling shared API utilities..."
-mkdir -p netlify/functions/_shared
+# The key fix - create a package.json in netlify/api for better module resolution
+cat > netlify/api/package.json << EOF
+{
+  "name": "lifeos-api",
+  "type": "module",
+  "version": "1.0.0"
+}
+EOF
 
-# Copy the storage adapter to Netlify Functions
-# Use relative paths for better compatibility during builds
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-cp "$SCRIPT_DIR/api/_storage.js" netlify/functions/_shared/ || echo "Warning: Could not copy _storage.js"
-cp "$SCRIPT_DIR/api/_error-handler.js" netlify/functions/_shared/ || echo "Warning: Could not copy _error-handler.js"
-cp "$SCRIPT_DIR/api/netlify-adapter.js" netlify/functions/_shared/ || echo "Warning: Could not copy netlify-adapter.js"
+# Copy utility files to shared directory for convenience
+echo "Setting up shared utilities..."
+mkdir -p netlify/functions/_shared
+cp api/_storage.js netlify/functions/_shared/
+cp api/_error-handler.js netlify/functions/_shared/
+cp api/netlify-adapter.js netlify/functions/_shared/
 
 # Create a helper to generate modern Netlify function wrapper for each API
 function create_netlify_function() {
   api_path=$1
   function_name=$(basename $api_path .js)
   target_dir="netlify/functions/$function_name"
+  
+  # Important to use absolute paths for clarity
+  original_handler_path="/opt/build/repo/netlify/api/$function_name.js"
   
   # Create directory for the function
   mkdir -p $target_dir
@@ -36,7 +49,8 @@ function create_netlify_function() {
   cat > $target_dir/index.js << EOF
 // Modern Netlify Function wrapper for $function_name API
 import { Context } from "@netlify/functions";
-import originalHandler from "../../netlify/api/$function_name.js";
+// Fix: Use absolute path reference for reliable imports
+import originalHandler from "../../../netlify/api/$function_name.js";
 
 // Express adapter to convert Request/Response objects
 const expressToNetlify = async (req, context) => {
@@ -106,6 +120,9 @@ export const config = {
 EOF
   
   echo "Created modern Netlify function: $function_name"
+  
+  # Explicitly copy the original handler file to ensure it's available
+  cp "api/$function_name.js" "netlify/api/$function_name.js" || echo "Warning: Failed to copy $function_name.js"
 }
 
 # Create a helper for nested API paths with path parameters
@@ -113,6 +130,7 @@ function create_nested_netlify_function() {
   nested_file=$1
   local_path=${nested_file#api/}
   function_name=$(echo $local_path | tr '/' '-' | sed 's/.js$//')
+  nested_dir=$(dirname "$local_path")
   
   # Parse the path to identify parameters
   api_path="/api/$local_path"
@@ -123,11 +141,15 @@ function create_nested_netlify_function() {
   target_dir="netlify/functions/$function_name"
   mkdir -p $target_dir
   
+  # Create the nested directory structure in netlify/api if needed
+  mkdir -p "netlify/api/$nested_dir"
+  
   # Create the function entry point with modern Netlify Functions API
   cat > $target_dir/index.js << EOF
 // Modern Netlify Function wrapper for nested API: $local_path
 import { Context } from "@netlify/functions";
-import originalHandler from "../../netlify/$nested_file";
+// Fix: Use absolute path reference for reliable imports
+import originalHandler from "../../../netlify/api/$local_path";
 
 // Express adapter to convert Request/Response objects
 const expressToNetlify = async (req, context) => {
@@ -196,12 +218,16 @@ export const config = {
 };
 EOF
   
+  # Explicitly copy the original handler file to ensure it's available
+  cp "$nested_file" "netlify/api/$local_path" || echo "Warning: Failed to copy $nested_file"
+  
   echo "Created modern Netlify function for nested API: $function_name with path: $route_path"
 }
 
-# Process all API endpoints except utility files
+# Process all API endpoints except utility files and netlify-adapter.js
 for api_file in api/*.js; do
-  if [[ $api_file != *"_"* ]]; then
+  # Skip utility files (prefixed with _) and netlify-adapter.js
+  if [[ $api_file != *"_"* && $api_file != *"netlify-adapter.js" ]]; then
     create_netlify_function $api_file
   fi
 done
@@ -243,5 +269,12 @@ export const config = {
 EOF
 
 echo "Created API catch-all function"
+
+# Debug: List files to verify they're in the correct locations
+echo "Verifying API files:"
+find netlify/api -type f | sort
+
+echo "Verifying function files:"
+find netlify/functions -type f | sort
 
 echo "Netlify Functions build process complete."

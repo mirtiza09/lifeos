@@ -76,6 +76,23 @@ If you encounter build errors related to `@netlify/functions`:
 3. If using an older version (like v2.x.x), update to the latest version with `npm install @netlify/functions@latest`
 4. Check that your `netlify.toml` correctly includes `external_node_modules = ["@netlify/functions"]`
 
+### Export Errors in Utility Modules
+
+If you encounter errors about missing default exports in your API utility files:
+
+1. Every API utility module (like `_error-handler.js`, `_storage.js`, and `netlify-adapter.js`) must include a default export function
+2. The Netlify Functions bundler requires a default export even for utility modules
+3. Example for utility modules:
+   ```javascript
+   export default async function handler(req, res) {
+     res.status(200).json({ 
+       message: "This is a utility module and shouldn't be called directly",
+       success: true
+     });
+   }
+   ```
+4. Ensure all imports reference the correct path after bundling
+
 ### API 404 Errors
 
 If you're seeing 404 errors for API requests:
@@ -102,6 +119,17 @@ To use a custom domain:
 3. Follow the steps to verify domain ownership and configure DNS
 
 ## Advanced Configuration
+
+### Build Script Internals
+
+The `netlify-build.sh` script handles the transformation of API files into Netlify Functions:
+
+1. It creates a `netlify/api/` directory containing all original API files
+2. It creates a `netlify/functions/` directory containing function wrappers
+3. For each API file, it creates a corresponding function wrapper with proper imports
+4. For utility files, it ensures they're available to all functions
+5. The script creates an API catch-all function for handling dynamic routes
+6. All paths are carefully managed to ensure correct imports after bundling
 
 ### Function-Specific Settings
 
