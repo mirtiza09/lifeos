@@ -52,6 +52,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up a daily log check at server startup
   checkAndLogDailyData();
   
+  // Netlify Functions compatibility - route /.netlify/functions/* to /api/*
+  app.all("/.netlify/functions/*", (req, res, next) => {
+    // Rewrite the path from /.netlify/functions/something to /api/something
+    const newPath = req.path.replace(/^\/\.netlify\/functions\//, '/api/');
+    console.log(`Netlify compatibility: Rewriting path from ${req.path} to ${newPath}`);
+    
+    // Change the URL and continue with routing
+    req.url = req.url.replace(/^\/\.netlify\/functions\//, '/api/');
+    next();
+  });
+  
   // Tasks endpoints
   app.get("/api/tasks", async (req, res) => {
     try {
