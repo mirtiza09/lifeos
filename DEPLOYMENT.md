@@ -1,124 +1,108 @@
-# Deployment Guide: Life OS Dashboard
+# Deploying LifeOS
 
-This document outlines how to deploy the Life OS Dashboard application to production environments.
+This guide provides deployment instructions for both local development and production environments.
 
-## Architecture Overview
+## Local Development
 
-The Life OS Dashboard is a full-stack JavaScript application with:
+To run the application locally for development:
 
-1. **Frontend**: React-based Single Page Application (SPA) using Vite
-2. **Backend**: Express.js server with API endpoints
-3. **Database**: PostgreSQL database (using NeonDB or similar)
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Set up environment variables:
+   Create a `.env` file at the root of the project with the following:
+   ```
+   DATABASE_URL=your_postgresql_connection_string
+   ```
+4. Start the development server:
+   ```
+   npm run dev
+   ```
+5. The application will be available at `http://localhost:3000`
 
-For production deployment, these components need to be deployed separately.
+## Production Deployment
 
-## Deployment Options
+For production deployment, you have several options:
 
-### Option 1: Netlify (Frontend) + Separate Backend
+### Option 1: Vercel (Recommended for simplicity)
 
-#### Frontend Deployment (Netlify)
+See detailed instructions in [DEPLOYMENT-VERCEL.md](./DEPLOYMENT-VERCEL.md)
 
-1. Create a Netlify account and connect your GitHub repository
-2. Configure build settings according to `netlify.toml`:
-   - Build command: `npm run build:client`
-   - Publish directory: `client/dist`
-3. Set up environment variables in Netlify dashboard:
-   - `VITE_API_URL`: URL of your backend API server
+### Option 2: Netlify
 
-#### Backend Deployment (Recommended Services)
+See detailed instructions in [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md)
 
-Choose one of these platforms to deploy your Express.js backend:
-- **Railway** (Recommended): Developer-friendly deployment with free tier ($5 credit/month ≈ 500 hours)
-- **Render**: Offers free tier for web services (90 days)
-- **Fly.io**: Modern alternative with generous free tier (3 small VMs)
-- **Heroku**: Classic choice, but no longer offers a free tier
+### Option 3: Self-hosted Server
 
-Your backend will need:
-1. The `DATABASE_URL` environment variable pointing to your PostgreSQL database
-2. Proper CORS configuration to allow requests from your Netlify frontend
+1. Build the application:
+   ```
+   npm run build
+   ```
 
-### Option 2: Vercel (Full Stack Serverless)
+2. Start the production server:
+   ```
+   npm start
+   ```
 
-Vercel supports deploying both the frontend and backend together as serverless functions:
-
-1. Create a Vercel account and connect your GitHub repository
-2. Vercel will automatically detect your project type
-3. Set up environment variables in Vercel dashboard:
-   - `DATABASE_URL`: PostgreSQL connection string
-   - `USE_POSTGRES`: Set to `true`
-4. Deploy the project
-
-The project includes the following Vercel-specific files:
-- `vercel.json`: Configuration for routing and builds
-- `api/` directory: Serverless functions for your backend APIs
-
-For details on converting Express routes to Vercel serverless functions, see [DEPLOYMENT-VERCEL.md](./DEPLOYMENT-VERCEL.md).
-
-### Option 3: Replit Deployment (All-in-one)
-
-Replit provides a simpler deployment solution that keeps the frontend and backend together.
-
-1. Use the "Deploy" button in your Replit project
-2. Ensure your PostgreSQL database credentials are properly configured
-3. No architectural changes are required for this option
+3. For production hosting, consider using a process manager like PM2:
+   ```
+   npm install -g pm2
+   pm2 start dist/index.js
+   ```
 
 ## Database Setup
 
-This application requires a PostgreSQL database:
+The application requires a PostgreSQL database. You can use:
 
-1. **NeonDB** (Recommended): Serverless Postgres with free tier
-   - Create an account at https://neon.tech
-   - Create a new project and database
-   - Copy the connection string to your backend environment as `DATABASE_URL`
+1. A local PostgreSQL installation
+2. A managed PostgreSQL service like [Neon](https://neon.tech), [Supabase](https://supabase.com), or [Render](https://render.com)
 
-2. **Alternative Postgres Providers**:
-   - Supabase
-   - Railway
-   - Heroku Postgres
-   - ElephantSQL
+Make sure to set the `DATABASE_URL` environment variable to point to your database.
 
-## Frontend-Backend Communication
+### Database Migration
 
-For separate deployments, you'll need to:
+When deploying the application for the first time or after schema changes:
 
-1. Update `client/src/lib/queryClient.ts` to use the environment variable for API URL:
-   ```typescript
-   const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-   ```
+```
+npm run db:push
+```
 
-2. Add a build script in `package.json` for building just the client:
-   ```json
-   "build:client": "vite build"
-   ```
-
-3. Ensure CORS is properly configured in the backend:
-   ```typescript
-   app.use(cors({
-     origin: 'https://your-netlify-app.netlify.app',
-     credentials: true
-   }));
-   ```
-
-## Offline Support
-
-The application includes offline support through:
-- IndexedDB for local data storage
-- Sync service to reconcile local and server data
-
-When deploying, ensure the sync service properly connects to your backend API.
+This will create/update the database schema based on your Drizzle models.
 
 ## Environment Variables
 
-### Backend
+The following environment variables are required:
+
 - `DATABASE_URL`: PostgreSQL connection string
-- `PORT`: Server port (default: 5000)
-- `NODE_ENV`: Set to 'production' for production deployments
 
-### Frontend
-- `VITE_API_URL`: URL to your backend API server
+Optional environment variables:
 
-## Regular Maintenance
+- `PORT`: The port the server will listen on (defaults to 3000)
+- `NODE_ENV`: Set to `production` for production mode
 
-1. **Database Backups**: Set up regular backups of your PostgreSQL database
-2. **Update Dependencies**: Regularly update npm packages for security patches
-3. **Monitor Error Logs**: Implement error tracking (e.g., Sentry) to catch and address issues
+## Deployment Checklist
+
+Before deploying to production, make sure to:
+
+1. Build the application in production mode
+2. Set all required environment variables
+3. Ensure the database is properly set up and migrated
+4. Configure proper error logging
+5. Set up HTTPS if not provided by your hosting platform
+6. Test all functionalities after deployment
+
+## Troubleshooting
+
+Common deployment issues:
+
+1. **Database connection errors**: Verify your `DATABASE_URL` is correct and that the database is accessible from your hosting environment.
+
+2. **Build failures**: Check that all dependencies are properly installed and compatible.
+
+3. **API errors**: Check the server logs for detailed error messages.
+
+4. **Frontend not loading**: Verify that static files are being served correctly.
+
+For more specific troubleshooting, refer to the documentation for your hosting platform.

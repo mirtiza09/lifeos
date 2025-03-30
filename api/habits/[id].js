@@ -1,56 +1,76 @@
-// Example Vercel serverless function for individual habit operations
-import { storage } from '../../server/storage';
+// API endpoint for managing individual habits
+import { storage } from '../_storage';
+import { withErrorHandler, validateId } from '../_error-handler';
 
-export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
-  // Handle OPTIONS request for CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  const { id } = req.query;
-  const habitId = parseInt(id);
-
-  try {
-    // GET /api/habits/[id] - Get a specific habit
-    if (req.method === 'GET') {
-      const habit = await storage.getHabit(habitId);
+async function habitHandler(req, res) {
+  // Get the habit ID from the URL parameter
+  const id = validateId(req);
+  
+  // GET - Retrieve a specific habit
+  if (req.method === 'GET') {
+    try {
+      const habit = await storage.getHabit(id);
+      
       if (!habit) {
-        res.status(404).json({ message: 'Habit not found' });
-        return;
+        return res.status(404).json({ 
+          error: true, 
+          message: `Habit with ID ${id} not found` 
+        });
       }
-      res.status(200).json(habit);
-    } 
-    // PATCH /api/habits/[id] - Update a habit
-    else if (req.method === 'PATCH') {
-      const updatedHabit = await storage.updateHabit(habitId, req.body);
-      if (!updatedHabit) {
-        res.status(404).json({ message: 'Habit not found' });
-        return;
-      }
-      res.status(200).json(updatedHabit);
-    } 
-    // DELETE /api/habits/[id] - Delete a habit
-    else if (req.method === 'DELETE') {
-      const deleted = await storage.deleteHabit(habitId);
-      if (!deleted) {
-        res.status(404).json({ message: 'Habit not found' });
-        return;
-      }
-      res.status(204).end();
-    } 
-    // Method not allowed
-    else {
-      res.status(405).json({ message: 'Method not allowed' });
+      
+      return res.status(200).json(habit);
+    } catch (error) {
+      throw new Error(`Error retrieving habit: ${error.message}`);
     }
-  } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
   }
+  
+  // PATCH - Update a specific habit
+  if (req.method === 'PATCH') {
+    try {
+      const updates = req.body;
+      
+      // Add updatedAt timestamp
+      updates.updatedAt = new Date().toISOString();
+      
+      const updatedHabit = await storage.updateHabit(id, updates);
+      
+      if (!updatedHabit) {
+        return res.status(404).json({ 
+          error: true, 
+          message: `Habit with ID ${id} not found` 
+        });
+      }
+      
+      return res.status(200).json(updatedHabit);
+    } catch (error) {
+      throw new Error(`Error updating habit: ${error.message}`);
+    }
+  }
+  
+  // DELETE - Delete a specific habit
+  if (req.method === 'DELETE') {
+    try {
+      const success = await storage.deleteHabit(id);
+      
+      if (!success) {
+        return res.status(404).json({ 
+          error: true, 
+          message: `Habit with ID ${id} not found` 
+        });
+      }
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: `Habit with ID ${id} deleted successfully` 
+      });
+    } catch (error) {
+      throw new Error(`Error deleting habit: ${error.message}`);
+    }
+  }
+  
+  // Method not allowed
+  res.setHeader('Allow', ['GET', 'PATCH', 'DELETE']);
+  res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
 }
+
+export default withErrorHandler(habitHandler);

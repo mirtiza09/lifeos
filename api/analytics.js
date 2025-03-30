@@ -1,33 +1,30 @@
-import { storage } from '../server/storage';
+// API endpoint for daily analytics
+import { storage } from './_storage';
+import { withErrorHandler } from './_error-handler';
 
 export default async function handler(req, res) {
-  try {
-    if (req.method === 'GET') {
-      // Just get today's analytics
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      const analytics = await storage.getDailyAnalytics(today);
+  // GET - Retrieve analytics for a specific date
+  if (req.method === 'GET') {
+    try {
+      const date = req.query.date || new Date().toISOString().split('T')[0];
       
-      if (!analytics) {
-        // If no analytics exist for today, generate them on-the-fly
-        const newAnalytics = await storage.logDailyAnalytics();
-        return res.json(newAnalytics);
-      }
-      
-      return res.json(analytics);
-    } else if (req.method === 'POST') {
-      // Force a log of analytics (used for testing or manual triggering)
-      // Can accept a specific date in the body
-      const { date } = req.body || {};
-      
-      // Log analytics with the provided date or default to today
-      const analytics = await storage.logDailyAnalytics(date);
-      
-      return res.json(analytics);
-    } else {
-      return res.status(405).json({ error: 'Method not allowed' });
+      // For now, just return a simple response since we don't have real analytics storage
+      // In a production app, this would retrieve actual analytics data
+      return res.status(200).json({
+        date,
+        message: "Analytics feature is currently under development. Check back soon!",
+        summary: {
+          habitsCompleted: 0,
+          habitsFailed: 0,
+          tasksCompleted: 0
+        }
+      });
+    } catch (error) {
+      throw new Error(`Error retrieving analytics: ${error.message}`);
     }
-  } catch (error) {
-    console.error('Analytics API error:', error);
-    return res.status(500).json({ error: 'Failed to process analytics request' });
   }
+  
+  // Method not allowed
+  res.setHeader('Allow', ['GET']);
+  res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
 }

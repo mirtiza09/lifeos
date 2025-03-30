@@ -1,8 +1,8 @@
-// API endpoint for marking a habit as complete
+// API endpoint for marking a habit as failed
 import { storage } from '../../_storage';
 import { withErrorHandler, validateId } from '../../_error-handler';
 
-async function completeHabitHandler(req, res) {
+async function failHabitHandler(req, res) {
   // Only allow PATCH requests for this endpoint
   if (req.method !== 'PATCH') {
     res.setHeader('Allow', ['PATCH']);
@@ -31,13 +31,13 @@ async function completeHabitHandler(req, res) {
       });
     }
     
-    // Complete the habit
-    const updatedHabit = await storage.completeHabit(id);
+    // Mark the habit as failed
+    const updatedHabit = await storage.failHabit(id);
     
     return res.status(200).json(updatedHabit);
   } catch (error) {
-    throw new Error(`Error completing habit: ${error.message}`);
+    throw new Error(`Error marking habit as failed: ${error.message}`);
   }
 }
 
-export default withErrorHandler(completeHabitHandler);
+export default withErrorHandler(failHabitHandler);

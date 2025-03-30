@@ -1,56 +1,76 @@
-// Example Vercel serverless function for individual task operations
-import { storage } from '../../server/storage';
+// API endpoint for managing individual tasks
+import { storage } from '../_storage';
+import { withErrorHandler, validateId } from '../_error-handler';
 
-export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
-  // Handle OPTIONS request for CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  const { id } = req.query;
-  const taskId = parseInt(id);
-
-  try {
-    // GET /api/tasks/[id] - Get a specific task
-    if (req.method === 'GET') {
-      const task = await storage.getTask(taskId);
+async function taskHandler(req, res) {
+  // Get the task ID from the URL parameter
+  const id = validateId(req);
+  
+  // GET - Retrieve a specific task
+  if (req.method === 'GET') {
+    try {
+      const task = await storage.getTask(id);
+      
       if (!task) {
-        res.status(404).json({ message: 'Task not found' });
-        return;
+        return res.status(404).json({ 
+          error: true, 
+          message: `Task with ID ${id} not found` 
+        });
       }
-      res.status(200).json(task);
-    } 
-    // PATCH /api/tasks/[id] - Update a task
-    else if (req.method === 'PATCH') {
-      const updatedTask = await storage.updateTask(taskId, req.body);
-      if (!updatedTask) {
-        res.status(404).json({ message: 'Task not found' });
-        return;
-      }
-      res.status(200).json(updatedTask);
-    } 
-    // DELETE /api/tasks/[id] - Delete a task
-    else if (req.method === 'DELETE') {
-      const deleted = await storage.deleteTask(taskId);
-      if (!deleted) {
-        res.status(404).json({ message: 'Task not found' });
-        return;
-      }
-      res.status(204).end();
-    } 
-    // Method not allowed
-    else {
-      res.status(405).json({ message: 'Method not allowed' });
+      
+      return res.status(200).json(task);
+    } catch (error) {
+      throw new Error(`Error retrieving task: ${error.message}`);
     }
-  } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
   }
+  
+  // PATCH - Update a specific task
+  if (req.method === 'PATCH') {
+    try {
+      const updates = req.body;
+      
+      // Add updatedAt timestamp
+      updates.updatedAt = new Date().toISOString();
+      
+      const updatedTask = await storage.updateTask(id, updates);
+      
+      if (!updatedTask) {
+        return res.status(404).json({ 
+          error: true, 
+          message: `Task with ID ${id} not found` 
+        });
+      }
+      
+      return res.status(200).json(updatedTask);
+    } catch (error) {
+      throw new Error(`Error updating task: ${error.message}`);
+    }
+  }
+  
+  // DELETE - Delete a specific task
+  if (req.method === 'DELETE') {
+    try {
+      const success = await storage.deleteTask(id);
+      
+      if (!success) {
+        return res.status(404).json({ 
+          error: true, 
+          message: `Task with ID ${id} not found` 
+        });
+      }
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: `Task with ID ${id} deleted successfully` 
+      });
+    } catch (error) {
+      throw new Error(`Error deleting task: ${error.message}`);
+    }
+  }
+  
+  // Method not allowed
+  res.setHeader('Allow', ['GET', 'PATCH', 'DELETE']);
+  res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
 }
+
+export default withErrorHandler(taskHandler);

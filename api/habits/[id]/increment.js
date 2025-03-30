@@ -1,8 +1,8 @@
-// API endpoint for marking a habit as complete
+// API endpoint for incrementing a counter-type habit
 import { storage } from '../../_storage';
 import { withErrorHandler, validateId } from '../../_error-handler';
 
-async function completeHabitHandler(req, res) {
+async function incrementHabitHandler(req, res) {
   // Only allow PATCH requests for this endpoint
   if (req.method !== 'PATCH') {
     res.setHeader('Allow', ['PATCH']);
@@ -23,6 +23,14 @@ async function completeHabitHandler(req, res) {
       });
     }
     
+    // Check if the habit is of counter type
+    if (habit.type !== 'counter') {
+      return res.status(400).json({
+        error: true,
+        message: "Only counter-type habits can be incremented."
+      });
+    }
+    
     // Check if the habit is active today
     if (!habit.isActiveToday) {
       return res.status(400).json({
@@ -31,13 +39,13 @@ async function completeHabitHandler(req, res) {
       });
     }
     
-    // Complete the habit
-    const updatedHabit = await storage.completeHabit(id);
+    // Increment the habit
+    const updatedHabit = await storage.incrementHabit(id);
     
     return res.status(200).json(updatedHabit);
   } catch (error) {
-    throw new Error(`Error completing habit: ${error.message}`);
+    throw new Error(`Error incrementing habit: ${error.message}`);
   }
 }
 
-export default withErrorHandler(completeHabitHandler);
+export default withErrorHandler(incrementHabitHandler);

@@ -1,36 +1,40 @@
-// Example Vercel serverless function for tasks
-import { storage } from '../server/storage';
+// API endpoint for managing tasks
+import { storage } from './_storage';
+import { withErrorHandler, validateRequiredFields } from './_error-handler';
 
-export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
-  // Handle OPTIONS request for CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  try {
-    // GET /api/tasks - Get all tasks
-    if (req.method === 'GET') {
+async function tasksHandler(req, res) {
+  // GET - Retrieve all tasks
+  if (req.method === 'GET') {
+    try {
       const tasks = await storage.getTasks();
-      res.status(200).json(tasks);
-    } 
-    // POST /api/tasks - Create a new task
-    else if (req.method === 'POST') {
-      const newTask = await storage.createTask(req.body);
-      res.status(201).json(newTask);
-    } 
-    // Method not allowed
-    else {
-      res.status(405).json({ message: 'Method not allowed' });
+      return res.status(200).json(tasks);
+    } catch (error) {
+      throw new Error(`Error retrieving tasks: ${error.message}`);
     }
-  } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
   }
+  
+  // POST - Create a new task
+  if (req.method === 'POST') {
+    try {
+      validateRequiredFields(req, ['text']);
+      const { text, completed = false } = req.body;
+      
+      const task = await storage.createTask({
+        text,
+        completed,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      return res.status(201).json(task);
+    } catch (error) {
+      throw new Error(`Error creating task: ${error.message}`);
+    }
+  }
+  
+  // Method not allowed
+  res.setHeader('Allow', ['GET', 'POST']);
+  res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
 }
+
+export default withErrorHandler(tasksHandler);
