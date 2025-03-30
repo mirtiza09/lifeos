@@ -31,6 +31,12 @@
   to = "/.netlify/functions/:splat"
   status = 200
   force = true
+  
+# Ensure direct /.netlify/functions/* requests are handled properly
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
 
 # SPA fallback - ensure all other routes are handled by the single-page application
 [[redirects]]

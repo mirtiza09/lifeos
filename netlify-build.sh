@@ -142,7 +142,7 @@ export default async (req, context) => {
 
 // Configure routing
 export const config = {
-  path: "/api/$function_name"
+  path: "/.netlify/functions/$function_name"
 };
 EOF
   
@@ -253,7 +253,7 @@ export default async (req, context) => {
 
 // Configure routing
 export const config = {
-  path: "$route_path"
+  path: "$route_path".replace(/^\/api\//, "/.netlify/functions/")
 };
 EOF
   
@@ -324,7 +324,7 @@ export default async (req, context) => {
 };
 
 export const config = {
-  path: "/api/*"
+  path: "/.netlify/functions/*"
 };
 EOF
 
