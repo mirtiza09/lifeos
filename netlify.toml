@@ -1,6 +1,6 @@
 [build]
   # Directory with the frontend build output
-  publish = "dist"
+  publish = "dist\public"
   # Build command to create the frontend build
   command = "npm run build"
 
