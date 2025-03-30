@@ -61,6 +61,7 @@
     "lucide-react": "^0.453.0",
     "marked": "^15.0.7",
     "memorystore": "^1.6.7",
+    "netlify-cli": "^19.1.4",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.14.1",

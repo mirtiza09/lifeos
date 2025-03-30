@@ -9,8 +9,12 @@
 /**
  * Default export handler for Netlify Functions compatibility
  * This empty handler is required for the Netlify Function wrapper to work correctly
+ * 
+ * This also serves as a debugging endpoint for the error-handler module
  */
 export default async function handler(req, res) {
+  console.log('Error handler module accessed directly');
+  console.log('DATABASE_URL available:', process.env.DATABASE_URL ? 'Yes (length: ' + process.env.DATABASE_URL.length + ')' : 'No');
   res.status(200).json({ 
     message: "This is a utility module and shouldn't be called directly",
     success: true

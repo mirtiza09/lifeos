@@ -28,11 +28,15 @@ let selectedStorage;
 if (process.env.DATABASE_URL) {
   console.log('Using PostgreSQL storage for Netlify Functions');
   selectedStorage = pgStorage;
+  // Add implementation identifier for diagnostics
+  selectedStorage._implementation = 'postgresql';
 } 
 // Fallback to in-memory storage
 else {
   console.log('DATABASE_URL not found, using in-memory storage (not recommended for production)');
   selectedStorage = netlifyStorage;
+  // Add implementation identifier for diagnostics
+  selectedStorage._implementation = 'in-memory';
 }
 
 /**
