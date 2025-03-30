@@ -1,0 +1,157 @@
+9:33:28 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+9:33:20 AM: Netlify Build                                                 
+9:33:20 AM: ────────────────────────────────────────────────────────────────
+9:33:20 AM: ​
+9:33:20 AM: ❯ Version
+9:33:20 AM:   @netlify/build 30.0.6
+9:33:20 AM: ​
+9:33:20 AM: ❯ Flags
+9:33:20 AM:   accountId: 6277f934281d786fcba56f61
+9:33:20 AM:   baseRelDir: true
+9:33:20 AM:   buildId: 67e8c9672265b60008389774
+9:33:20 AM:   deployId: 67e8c9672265b60008389776
+9:33:20 AM: ​
+9:33:20 AM: ❯ Current directory
+9:33:20 AM:   /opt/build/repo
+9:33:20 AM: ​
+9:33:20 AM: ❯ Config file
+9:33:20 AM:   /opt/build/repo/netlify.toml
+9:33:20 AM: ​
+9:33:20 AM: ❯ Context
+9:33:20 AM:   production
+9:33:20 AM: ​
+9:33:20 AM: build.command from netlify.toml                               
+9:33:20 AM: ────────────────────────────────────────────────────────────────
+9:33:20 AM: ​
+9:33:20 AM: $ bash build-for-netlify.sh
+9:33:20 AM: 🚀 Starting LifeOS build for Netlify deployment...
+9:33:20 AM: 🔍 Using Node.js version: v18.20.8
+9:33:20 AM: 🏗️  Building application...
+9:33:20 AM: > rest-express@1.0.0 build
+9:33:20 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+9:33:21 AM: vite v5.4.14 building for production...
+9:33:21 AM: transforming...
+9:33:27 AM: ✓ 3093 modules transformed.
+9:33:27 AM: rendering chunks...
+9:33:27 AM: computing gzip size...
+9:33:27 AM: ../dist/public/index.html                     1.83 kB │ gzip:   0.71 kB
+9:33:27 AM: ../dist/public/assets/index-XSWH6ygP.css     81.99 kB │ gzip:  13.33 kB
+9:33:27 AM: ../dist/public/assets/index-BBaXbnq5.js   1,026.62 kB │ gzip: 295.08 kB
+9:33:27 AM: 
+9:33:27 AM: (!) Some chunks are larger than 500 kB after minification. Consider:
+9:33:27 AM: - Using dynamic import() to code-split the application
+9:33:27 AM: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+9:33:27 AM: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+9:33:27 AM: ✓ built in 6.71s
+9:33:27 AM:   dist/index.js  52.3kb
+9:33:27 AM: ⚡ Done in 4ms
+9:33:27 AM: 🔧 Preparing Netlify Functions...
+9:33:27 AM: Starting Netlify Functions build process...
+9:33:27 AM: Bundling shared API utilities...
+9:33:27 AM: Created modern Netlify function: analytics
+9:33:27 AM: Created modern Netlify function: day-start-time
+9:33:27 AM: Created modern Netlify function: habits
+9:33:27 AM: Created modern Netlify function: log-daily-data
+9:33:27 AM: Created modern Netlify function: migrate
+9:33:27 AM: Created modern Netlify function: netlify-adapter
+9:33:27 AM: Created modern Netlify function: settings
+9:33:27 AM: Created modern Netlify function: tasks
+9:33:27 AM: Created modern Netlify function for nested API: analytics-range with path: /api/analytics/range.js
+9:33:27 AM: Created modern Netlify function for nested API: habits-[id] with path: /api/habits/:$1.js
+9:33:27 AM: Created modern Netlify function for nested API: tasks-[id] with path: /api/tasks/:$1.js
+9:33:27 AM: Created API catch-all function
+9:33:27 AM: Netlify Functions build process complete.
+9:33:27 AM: ✅ Build for Netlify completed successfully
+9:33:27 AM:    Your application is ready for deployment
+9:33:27 AM: ​
+9:33:27 AM: (build.command completed in 7.5s)
+9:33:27 AM: ​
+9:33:27 AM: Functions bundling                                            
+9:33:27 AM: ────────────────────────────────────────────────────────────────
+9:33:27 AM: ​
+9:33:27 AM: Packaging Functions from netlify/functions directory:
+9:33:27 AM:  - analytics/index.js
+9:33:27 AM:  - analytics-range/index.js
+9:33:27 AM:  - api-catchall/index.js
+9:33:27 AM:  - day-start-time/index.js
+9:33:27 AM:  - habits/index.js
+9:33:27 AM:  - habits-[id]/index.js
+9:33:27 AM:  - log-daily-data/index.js
+9:33:27 AM:  - migrate/index.js
+9:33:27 AM:  - netlify-adapter/index.js
+9:33:27 AM:  - settings/index.js
+9:33:27 AM:  - tasks/index.js
+9:33:27 AM:  - tasks-[id]/index.js
+9:33:27 AM: ​
+9:33:27 AM: ✘ [ERROR] Could not resolve "../../api/analytics.js"
+9:33:27 AM:     netlify/functions/analytics/index.js:3:28:
+9:33:27 AM:       3 │ import originalHandler from "../../api/analytics.js";
+9:33:27 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~
+9:33:27 AM: ✘ [ERROR] Could not resolve "../../api/day-start-time.js"
+9:33:27 AM:     netlify/functions/day-start-time/index.js:3:28:
+9:33:27 AM:       3 │ import originalHandler from "../../api/day-start-time.js";
+9:33:27 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+9:33:27 AM: ✘ [ERROR] Could not resolve "../../api/habits.js"
+9:33:27 AM:     netlify/functions/habits/index.js:3:28:
+9:33:27 AM:       3 │ import originalHandler from "../../api/habits.js";
+9:33:27 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~
+9:33:27 AM: ✘ [ERROR] Could not resolve "../../api/analytics/range.js"
+9:33:27 AM:     netlify/functions/analytics-range/index.js:3:28:
+9:33:27 AM:       3 │ import originalHandler from "../../api/analytics/range.js";
+9:33:27 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+9:33:28 AM: ✘ [ERROR] Could not resolve "../../api/analytics/range.js"
+9:33:28 AM:     netlify/functions/analytics-range/index.js:3:28:
+9:33:28 AM:       3 │ import originalHandler from "../../api/analytics/range.js";
+9:33:28 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+9:33:28 AM: ✘ [ERROR] Could not resolve "../../api/habits.js"
+9:33:28 AM:     netlify/functions/habits/index.js:3:28:
+9:33:28 AM:       3 │ import originalHandler from "../../api/habits.js";
+9:33:28 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~
+9:33:28 AM: ✘ [ERROR] Could not resolve "../../api/analytics.js"
+9:33:28 AM:     netlify/functions/analytics/index.js:3:28:
+9:33:28 AM:       3 │ import originalHandler from "../../api/analytics.js";
+9:33:28 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~
+9:33:28 AM: ✘ [ERROR] Could not resolve "../../api/day-start-time.js"
+9:33:28 AM:     netlify/functions/day-start-time/index.js:3:28:
+9:33:28 AM:       3 │ import originalHandler from "../../api/day-start-time.js";
+9:33:28 AM:         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+9:33:28 AM: ​
+9:33:28 AM: Dependencies installation error                               
+9:33:28 AM: ────────────────────────────────────────────────────────────────
+9:33:28 AM: ​
+9:33:28 AM:   Error message
+9:33:28 AM:   A Netlify Function failed to require one of its dependencies.
+9:33:28 AM:   Please make sure it is present in the site's top-level "package.json".
+​
+9:33:28 AM:   Build failed with 1 error:
+9:33:28 AM:   netlify/functions/analytics-range/index.js:3:28: ERROR: Could not resolve "../../api/analytics/range.js"
+9:33:28 AM: ​
+9:33:28 AM:   Resolved config
+9:33:28 AM:   build:
+9:33:28 AM:     command: bash build-for-netlify.sh
+9:33:28 AM:     commandOrigin: config
+9:33:28 AM:     environment:
+9:33:28 AM:       - DATABASE_URL
+9:33:28 AM:       - DEFAULT_PASSCODE
+9:33:28 AM:       - NODE_VERSION
+9:33:28 AM:       - NPM_VERSION
+9:33:28 AM:     publish: /opt/build/repo/dist/public
+9:33:28 AM:     publishOrigin: config
+9:33:28 AM:   functions:
+9:33:28 AM:     '*':
+9:33:28 AM:       external_node_modules:
+9:33:28 AM:         - '@netlify/functions'
+9:33:28 AM:       node_bundler: esbuild
+9:33:28 AM:   functionsDirectory: /opt/build/repo/netlify/functions
+9:33:28 AM:   redirects:
+9:33:28 AM:     - force: true
+9:33:28 AM:       from: /api/*
+      status: 200
+      to: /.netlify/functions/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+9:33:28 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+9:33:28 AM: Failing build: Failed to build site
+9:33:28 AM: Finished processing build request in 39.166s

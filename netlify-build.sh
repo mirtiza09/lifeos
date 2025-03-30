@@ -7,6 +7,11 @@ echo "Starting Netlify Functions build process..."
 # Create netlify/functions directory if it doesn't exist
 mkdir -p netlify/functions
 
+# Copy the entire API directory to ensure all handlers are available
+echo "Copying API files to Netlify build directory..."
+mkdir -p netlify/api
+cp -r api/* netlify/api/
+
 # Bundle the shared API utilities
 echo "Bundling shared API utilities..."
 mkdir -p netlify/functions/_shared
@@ -31,7 +36,7 @@ function create_netlify_function() {
   cat > $target_dir/index.js << EOF
 // Modern Netlify Function wrapper for $function_name API
 import { Context } from "@netlify/functions";
-import originalHandler from "../../api/$function_name.js";
+import originalHandler from "../../netlify/api/$function_name.js";
 
 // Express adapter to convert Request/Response objects
 const expressToNetlify = async (req, context) => {
@@ -122,7 +127,7 @@ function create_nested_netlify_function() {
   cat > $target_dir/index.js << EOF
 // Modern Netlify Function wrapper for nested API: $local_path
 import { Context } from "@netlify/functions";
-import originalHandler from "../../$nested_file";
+import originalHandler from "../../netlify/$nested_file";
 
 // Express adapter to convert Request/Response objects
 const expressToNetlify = async (req, context) => {

@@ -17,6 +17,11 @@
   node_bundler = "esbuild"
   # External dependencies that shouldn't be bundled
   external_node_modules = ["@netlify/functions"]
+  
+[functions."*"]
+  # Node.js version for function runtime (min v18 for Fetch API support)
+  node_bundler = "esbuild"
+  external_node_modules = ["@netlify/functions"]
 
 # Handle API routes - ensure they're properly routed to Netlify Functions
 [[redirects]]

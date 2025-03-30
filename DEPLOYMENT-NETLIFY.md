@@ -67,6 +67,15 @@ The application connects to your PostgreSQL database using the `DATABASE_URL` en
 
 ## Troubleshooting
 
+### Build Errors with @netlify/functions
+
+If you encounter build errors related to `@netlify/functions`:
+
+1. Make sure your `package.json` has `"@netlify/functions": "^3.0.4"` (or newer) in dependencies
+2. Ensure the version matches between your local development and Netlify's build environment
+3. If using an older version (like v2.x.x), update to the latest version with `npm install @netlify/functions@latest`
+4. Check that your `netlify.toml` correctly includes `external_node_modules = ["@netlify/functions"]`
+
 ### API 404 Errors
 
 If you're seeing 404 errors for API requests:

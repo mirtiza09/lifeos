@@ -1,6 +1,6 @@
 // Modern Netlify Function wrapper for test API
 import { Context } from "@netlify/functions";
-import originalHandler from "../../api/test.js";
+import originalHandler from "../../netlify/api/test.js";
 
 // Express adapter to convert Request/Response objects
 const expressToNetlify = async (req, context) => {
