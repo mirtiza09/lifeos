@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build:netlify"
+  command = "bash build-for-netlify.sh"
   publish = "dist/public"
   functions = "netlify/functions"
 

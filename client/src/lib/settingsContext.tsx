@@ -23,9 +23,11 @@ const defaultSettings: SettingsContextType = {
 
 const SettingsContext = createContext<SettingsContextType>(defaultSettings);
 
-export const useSettings = () => useContext(SettingsContext);
+export function useSettings() {
+  return useContext(SettingsContext);
+}
 
-export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [dayStartTime, setLocalDayStartTime] = useState<string>(defaultSettings.dayStartTime);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
@@ -88,11 +90,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       
       // Send the new time to the server
       const response = await fetch('/api/day-start-time', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ dayStartTime: newTime }),
+        body: JSON.stringify({ time: newTime }),
       });
       
       if (response.ok) {

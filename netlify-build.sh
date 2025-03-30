@@ -49,11 +49,11 @@ for dir in api/*; do
   if [ -d "$dir" ]; then
     for nested_file in $dir/*.js; do
       if [ -f "$nested_file" ]; then
-        local_path=${nested_file#api/}
-        function_name=$(echo $local_path | tr '/' '-' | sed 's/.js$//')
+        local local_path=${nested_file#api/}
+        local function_name=$(echo $local_path | tr '/' '-' | sed 's/.js$//')
         
         # Create a flattened function name for Netlify
-        target_dir="netlify/functions/$function_name"
+        local target_dir="netlify/functions/$function_name"
         mkdir -p $target_dir
         
         # Create the function entry point with path mapping

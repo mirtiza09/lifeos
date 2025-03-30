@@ -22,7 +22,7 @@ You'll need to set up the following environment variables in Netlify:
 2. Click "Import from Git"
 3. Connect to your Git provider and select your repository
 4. Configure the project with these settings:
-   - Build Command: `npm run build:netlify`
+   - Build Command: `bash build-for-netlify.sh`
    - Publish Directory: `dist/public`
    - Functions Directory: `netlify/functions`
 5. Add the environment variables from Step 1

@@ -22,7 +22,7 @@ You'll need to set up the following environment variables in Vercel:
 2. Click "New Project"
 3. Import your Git repository
 4. Configure the project with these settings:
-   - Build Command: `npm run build:vercel`
+   - Build Command: `bash build-for-vercel.sh`
    - Output Directory: `dist`
    - Install Command: `npm install`
 5. Add the environment variables from Step 1
