@@ -1,0 +1,624 @@
+==> It looks like we don't have access to your repo, but we'll try to clone it anyway.
+==> Cloning from https://github.com/mirtiza09/lifeos
+==> Checking out commit 963fb0de67e71565c1f4b4963cd06a1c32a8ee19 in branch master
+==> Using Node.js version 22.12.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Using Bun version 1.1.0 (default)
+==> Docs on specifying a bun version: https://render.com/docs/bun-version
+==> Running build command 'npm install; npm run build'...
+added 2335 packages, and audited 2339 packages in 46s
+377 packages are looking for funding
+  run `npm fund` for details
+13 moderate severity vulnerabilities
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+vite v5.4.14 building for production...
+transforming...
+✓ 3093 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                     1.83 kB │ gzip:   0.71 kB
+../dist/public/assets/index-XSWH6ygP.css     81.99 kB │ gzip:  13.33 kB
+../dist/public/assets/index-Dno35ddT.js   1,026.89 kB │ gzip: 295.17 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.43s
+  dist/index.js  52.6kb
+⚡ Done in 5ms
+==> Uploading build...
+==> Deploying...
+==> Uploaded in 7.0s. Compression took 7.6s
+==> Build successful 🎉
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Using PostgreSQL storage implementation
+Starting migration from file-based storage to PostgreSQL...
+No existing data files found, initializing with defaults
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Setting up database schema...
+4:34:02 PM [express] Setting up database tables...
+Setting up database schema...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+Migrating tasks...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+4:34:04 PM [express] Database tables setup completed.
+4:34:04 PM [express] Database ready to use.
+4:34:04 PM [express] serving on port 5000
+Next daily data check scheduled in 11 hours
+Migrated 4 tasks
+Migrating habits...
+Checking habit "One": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "One" is daily -> true
+Checking habit "Namaz": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Namaz" is daily -> true
+Checking habit "Conscious Eating": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Conscious Eating" is daily -> true
+Checking habit "Exercise": day=0, formattedDay=7, repeatDays=1,3,5
+Habit "Exercise" is weekly, checking if 7 is in [1,3,5] -> false
+Migrated 4 habits
+Migrating notes...
+Migrated 0 notes
+Migration completed successfully!
+Migration script completed
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+==> No open ports detected, continuing to scan...
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Using PostgreSQL storage implementation
+Starting migration from file-based storage to PostgreSQL...
+No existing data files found, initializing with defaults
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Setting up database schema...
+4:34:24 PM [express] Setting up database tables...
+Setting up database schema...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+4:34:24 PM [express] Database tables setup completed.
+4:34:24 PM [express] Database ready to use.
+4:34:25 PM [express] serving on port 5000
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+Migrating tasks...
+Next daily data check scheduled in 11 hours
+Migrated 4 tasks
+Migrating habits...
+Checking habit "One": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "One" is daily -> true
+Checking habit "Namaz": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Namaz" is daily -> true
+Checking habit "Conscious Eating": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Conscious Eating" is daily -> true
+Checking habit "Exercise": day=0, formattedDay=7, repeatDays=1,3,5
+Habit "Exercise" is weekly, checking if 7 is in [1,3,5] -> false
+Migrated 4 habits
+Migrating notes...
+Migrated 0 notes
+Migration completed successfully!
+Migration script completed
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Using PostgreSQL storage implementation
+Starting migration from file-based storage to PostgreSQL...
+No existing data files found, initializing with defaults
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Setting up database schema...
+4:34:51 PM [express] Setting up database tables...
+Setting up database schema...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+Migrating tasks...
+4:34:52 PM [express] Database tables setup completed.
+4:34:52 PM [express] Database ready to use.
+4:34:52 PM [express] serving on port 5000
+Next daily data check scheduled in 11 hours
+Migrated 4 tasks
+Migrating habits...
+Checking habit "One": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "One" is daily -> true
+Checking habit "Namaz": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Namaz" is daily -> true
+Checking habit "Conscious Eating": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Conscious Eating" is daily -> true
+Checking habit "Exercise": day=0, formattedDay=7, repeatDays=1,3,5
+Habit "Exercise" is weekly, checking if 7 is in [1,3,5] -> false
+Migrated 4 habits
+Migrating notes...
+Migrated 0 notes
+Migration completed successfully!
+Migration script completed
+==> No open ports detected, continuing to scan...
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Using PostgreSQL storage implementation
+Starting migration from file-based storage to PostgreSQL...
+No existing data files found, initializing with defaults
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Setting up database schema...
+4:35:30 PM [express] Setting up database tables...
+Setting up database schema...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+Migrating tasks...
+4:35:31 PM [express] Database tables setup completed.
+4:35:31 PM [express] Database ready to use.
+4:35:31 PM [express] serving on port 5000
+Next daily data check scheduled in 11 hours
+Migrated 4 tasks
+Migrating habits...
+Checking habit "One": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "One" is daily -> true
+Checking habit "Namaz": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Namaz" is daily -> true
+Checking habit "Conscious Eating": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Conscious Eating" is daily -> true
+Checking habit "Exercise": day=0, formattedDay=7, repeatDays=1,3,5
+Habit "Exercise" is weekly, checking if 7 is in [1,3,5] -> false
+Migrated 4 habits
+Migrating notes...
+Migrated 0 notes
+Migration completed successfully!
+Migration script completed
+==> No open ports detected, continuing to scan...
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Using PostgreSQL storage implementation
+Starting migration from file-based storage to PostgreSQL...
+No existing data files found, initializing with defaults
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+Data saved to files successfully
+The `fetchConnectionCache` option is deprecated (now always `true`)
+PostgreSQL database connection established
+Setting up database schema...
+4:36:37 PM [express] Setting up database tables...
+Setting up database schema...
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "users" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "tasks" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "habits" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+{
+  severity_local: 'NOTICE',
+  severity: 'NOTICE',
+  code: '42P07',
+  message: 'relation "notes" already exists, skipping',
+  file: 'parse_utilcmd.c',
+  line: '207',
+  routine: 'transformCreateStmt'
+}
+Database schema created successfully
+Migrating tasks...
+4:36:37 PM [express] Database tables setup completed.
+4:36:37 PM [express] Database ready to use.
+4:36:37 PM [express] serving on port 5000
+Next daily data check scheduled in 11 hours
+Migrated 4 tasks
+Migrating habits...
+Checking habit "One": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "One" is daily -> true
+Checking habit "Namaz": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Namaz" is daily -> true
+Checking habit "Conscious Eating": day=0, formattedDay=7, repeatDays=1,2,3,4,5,6,7
+Habit "Conscious Eating" is daily -> true
+Checking habit "Exercise": day=0, formattedDay=7, repeatDays=1,3,5
+Habit "Exercise" is weekly, checking if 7 is in [1,3,5] -> false
+Migrated 4 habits
+Migrating notes...
+Migrated 0 notes
+Migration completed successfully!
+Migration script completed

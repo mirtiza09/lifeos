@@ -1,0 +1,604 @@
+Settings modal - current local day: 0, formatted as: 7
+/.netlify/functions/habits:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+/.netlify/functions/notes:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+/.netlify/functions/tasks:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+/.netlify/functions/day-start-time:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: Array(7)
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+2index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/habits
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/notes
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/tasks
+/.netlify/functions/habits:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: Array(7)
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+/.netlify/functions/notes:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+/.netlify/functions/tasks:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+2index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: Array(7)
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/tasks
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/habits
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/notes
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: (7) ['1', '2', '3', '4', '5', '6', '7']
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/notes 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/habits 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/tasks 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+2index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: (7) ['1', '2', '3', '4', '5', '6', '7']
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/tasks
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/habits
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/notes
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: (7) ['1', '2', '3', '4', '5', '6', '7']
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/habits 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: (7) ['1', '2', '3', '4', '5', '6', '7']
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/notes 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/tasks 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: (7) ['1', '2', '3', '4', '5', '6', '7']
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/tasks
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/habits
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/notes
+index-Dno35ddT.js:372 Default values received: undefined
+index-Dno35ddT.js:372 Initial days: (7) ['1', '2', '3', '4', '5', '6', '7']
+index-Dno35ddT.js:372 Repeat type from defaultValues: undefined
+index-Dno35ddT.js:376 Settings modal - current local day: 0, formatted as: 7
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/notes 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/tasks 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/habits 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+2index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)
+    at async index-Dno35ddT.js:48:43999
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/notes
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/tasks
+index-Dno35ddT.js:48 Making API request to: /.netlify/functions/habits
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/tasks 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/notes 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+netlify-adapter.js:61 
+            
+            
+           GET https://lifeos.onrender.com/.netlify/functions/habits 404 (Not Found)
+window.fetch @ netlify-adapter.js:61
+(anonymous) @ index-Dno35ddT.js:48
+a @ index-Dno35ddT.js:48
+m @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+Promise.then
+(anonymous) @ index-Dno35ddT.js:48
+Promise.catch
+m @ index-Dno35ddT.js:48
+start @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+fc @ index-Dno35ddT.js:48
+fetch @ index-Dno35ddT.js:48
+refetch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+batch @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+await in (anonymous)
+(anonymous) @ index-Dno35ddT.js:48
+onFocus @ index-Dno35ddT.js:48
+(anonymous) @ index-Dno35ddT.js:48
+n @ index-Dno35ddT.js:48Understand this errorAI
+3index-Dno35ddT.js:48 Query function error: Error: 404: Not Found
+
+    at cN (index-Dno35ddT.js:48:42844)

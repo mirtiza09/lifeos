@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import API_URL from './apiConfig';
+import API_URL, { API_PATH_PREFIX } from './apiConfig';
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -19,15 +19,16 @@ export async function apiRequest(
   const data = options?.data;
   
   try {
-    // Use Netlify Functions path if we're in Netlify environment
+    // Build the appropriate URL based on the deployment platform
     let fullUrl;
     
     if (url.startsWith('http')) {
       // External URL, leave as is
       fullUrl = url;
-    } else if ((window as any).DEPLOYMENT_PLATFORM === 'netlify' && url.startsWith('/api/')) {
-      // Replace with Netlify Functions path for API endpoints
-      fullUrl = url.replace(/^\/api\//, '/.netlify/functions/');
+    } else if (url.startsWith('/api/')) {
+      // Convert standard API path to platform-specific path
+      const path = url.replace(/^\/api\//, '/');
+      fullUrl = `${API_PATH_PREFIX}${path}`;
     } else {
       // Standard path construction using base URL
       const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
@@ -69,15 +70,16 @@ export const getQueryFn = <TData>(options: {
     try {
       const url = queryKey[0] as string;
       
-      // Use Netlify Functions path if we're in Netlify environment
+      // Build the appropriate URL based on the deployment platform
       let fullUrl;
       
       if (url.startsWith('http')) {
         // External URL, leave as is
         fullUrl = url;
-      } else if ((window as any).DEPLOYMENT_PLATFORM === 'netlify' && url.startsWith('/api/')) {
-        // Replace with Netlify Functions path for API endpoints
-        fullUrl = url.replace(/^\/api\//, '/.netlify/functions/');
+      } else if (url.startsWith('/api/')) {
+        // Convert standard API path to platform-specific path
+        const path = url.replace(/^\/api\//, '/');
+        fullUrl = `${API_PATH_PREFIX}${path}`;
       } else {
         // Standard path construction using base URL
         const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
