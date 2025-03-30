@@ -40,9 +40,10 @@
   if (isNetlifyEnvironment) {
     // Set global configuration for the application
     window.DEPLOYMENT_PLATFORM = 'netlify';
-    window.API_BASE_URL = '/.netlify/functions';
+    window.API_BASE_URL = '/api';
+    window.NETLIFY_FUNCTIONS_URL = '/.netlify/functions';
     
-    console.log('Netlify environment detected - API requests will use /.netlify/functions path');
+    console.log('Netlify environment detected - API requests will be directed to Netlify Functions');
     
     // Patch all API request methods to use Netlify Functions path
     const originalFetch = window.fetch;
@@ -51,8 +52,9 @@
       
       // Only transform URLs that start with /api
       if (typeof url === 'string' && url.startsWith('/api')) {
-        // Replace /api with /.netlify/functions
-        newUrl = url.replace(/^\/api/, '/.netlify/functions');
+        // Transform to use the correct Netlify function path
+        // Replace /api/ with /.netlify/functions/ to avoid double /api/ path issues
+        newUrl = url.replace(/^\/api\//, '/.netlify/functions/');
         console.log(`Rewriting API request: ${url} → ${newUrl}`);
       }
       
@@ -61,7 +63,9 @@
     
     // Create a global helper for API URL conversion
     window.getNetlifyFunctionUrl = function(apiPath) {
-      if (apiPath.startsWith('/api')) {
+      if (apiPath.startsWith('/api/')) {
+        return apiPath.replace(/^\/api\//, '/.netlify/functions/');
+      } else if (apiPath.startsWith('/api')) {
         return apiPath.replace(/^\/api/, '/.netlify/functions');
       }
       return apiPath;

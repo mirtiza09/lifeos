@@ -19,11 +19,20 @@ export async function apiRequest(
   const data = options?.data;
   
   try {
-    // Use Netlify Functions path if defined by adapter
-    const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
+    // Use Netlify Functions path if we're in Netlify environment
+    let fullUrl;
     
-    // Prepend API_URL or BASE_URL if needed
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+    if (url.startsWith('http')) {
+      // External URL, leave as is
+      fullUrl = url;
+    } else if ((window as any).DEPLOYMENT_PLATFORM === 'netlify' && url.startsWith('/api/')) {
+      // Replace with Netlify Functions path for API endpoints
+      fullUrl = url.replace(/^\/api\//, '/.netlify/functions/');
+    } else {
+      // Standard path construction using base URL
+      const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
+      fullUrl = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+    }
     
     console.log(`Making API request to: ${fullUrl} (method: ${method})`);
     
@@ -60,13 +69,20 @@ export const getQueryFn = <TData>(options: {
     try {
       const url = queryKey[0] as string;
       
-      // Use Netlify Functions path if defined by adapter
-      const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
+      // Use Netlify Functions path if we're in Netlify environment
+      let fullUrl;
       
-      // Construct full URL
-      const fullUrl = url.startsWith('http') 
-        ? url 
-        : `${baseUrl}${url}`;
+      if (url.startsWith('http')) {
+        // External URL, leave as is
+        fullUrl = url;
+      } else if ((window as any).DEPLOYMENT_PLATFORM === 'netlify' && url.startsWith('/api/')) {
+        // Replace with Netlify Functions path for API endpoints
+        fullUrl = url.replace(/^\/api\//, '/.netlify/functions/');
+      } else {
+        // Standard path construction using base URL
+        const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
+        fullUrl = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+      }
         
       console.log(`Making API request to: ${fullUrl}`);
       
