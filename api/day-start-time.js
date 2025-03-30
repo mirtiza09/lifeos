@@ -1,49 +1,48 @@
-// Example Vercel serverless function for day start time settings
 import fs from 'fs';
 import path from 'path';
 
-// Default day start time if not set
-const DEFAULT_DAY_START_TIME = '04:00';
-// Path to settings file - for Vercel, we need to use /tmp for write access
-const SETTINGS_PATH = process.env.NODE_ENV === 'production' 
-  ? '/tmp/settings.json'
-  : path.join(process.cwd(), 'data', 'settings.json');
-
-// Helper function to read settings
+// Helper function to read settings from file or create defaults
 async function readSettings() {
   try {
-    // Ensure the file exists in production
-    if (process.env.NODE_ENV === 'production' && !fs.existsSync(SETTINGS_PATH)) {
-      const defaultSettings = { dayStartTime: DEFAULT_DAY_START_TIME };
-      fs.writeFileSync(SETTINGS_PATH, JSON.stringify(defaultSettings, null, 2), 'utf8');
-    }
+    const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
     
-    // Read the settings file if it exists
-    if (fs.existsSync(SETTINGS_PATH)) {
-      const data = fs.readFileSync(SETTINGS_PATH, 'utf8');
+    if (fs.existsSync(settingsPath)) {
+      const data = await fs.promises.readFile(settingsPath, 'utf8');
       return JSON.parse(data);
+    } else {
+      // Default settings
+      const defaultSettings = {
+        dayStartTime: "04:00" // Default to 4:00 AM
+      };
+      
+      // Ensure data directory exists
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) {
+        await fs.promises.mkdir(dataDir, { recursive: true });
+      }
+      
+      // Write default settings
+      await fs.promises.writeFile(settingsPath, JSON.stringify(defaultSettings, null, 2));
+      return defaultSettings;
     }
-    
-    // Return default settings if file doesn't exist
-    return { dayStartTime: DEFAULT_DAY_START_TIME };
   } catch (error) {
     console.error('Error reading settings:', error);
-    return { dayStartTime: DEFAULT_DAY_START_TIME };
+    return { dayStartTime: "04:00" }; // Fallback default
   }
 }
 
-// Helper function to write settings
+// Helper function to write settings to file
 async function writeSettings(settings) {
   try {
-    // Ensure directory exists for non-production environments
-    if (process.env.NODE_ENV !== 'production') {
-      const dir = path.dirname(SETTINGS_PATH);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
+    const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
+    
+    // Ensure data directory exists
+    const dataDir = path.join(process.cwd(), 'data');
+    if (!fs.existsSync(dataDir)) {
+      await fs.promises.mkdir(dataDir, { recursive: true });
     }
     
-    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf8');
+    await fs.promises.writeFile(settingsPath, JSON.stringify(settings, null, 2));
     return true;
   } catch (error) {
     console.error('Error writing settings:', error);
@@ -52,58 +51,51 @@ async function writeSettings(settings) {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
-  // Handle OPTIONS request for CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
   try {
-    // GET /api/day-start-time - Get day start time setting
+    // GET request - return the current day start time
     if (req.method === 'GET') {
       const settings = await readSettings();
-      res.status(200).json({ dayStartTime: settings.dayStartTime || DEFAULT_DAY_START_TIME });
-    } 
-    // POST /api/day-start-time - Update day start time setting
-    else if (req.method === 'POST') {
+      return res.json({ dayStartTime: settings.dayStartTime });
+    }
+    
+    // POST request - update the day start time
+    if (req.method === 'POST') {
       const { dayStartTime } = req.body;
       
-      if (!dayStartTime || typeof dayStartTime !== 'string') {
-        res.status(400).json({ message: 'Invalid day start time format' });
-        return;
-      }
-      
       // Validate time format (HH:MM)
-      const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
-      if (!timeRegex.test(dayStartTime)) {
-        res.status(400).json({ message: 'Invalid time format. Use HH:MM format (24-hour)' });
-        return;
+      const timePattern = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
+      if (!timePattern.test(dayStartTime)) {
+        return res.status(400).json({ 
+          message: "Invalid time format. Please provide time in HH:MM format (24-hour)" 
+        });
       }
       
-      // Read current settings, update and save
+      // Read existing settings
       const settings = await readSettings();
+      
+      // Update day start time
       settings.dayStartTime = dayStartTime;
       
+      // Write updated settings
       const success = await writeSettings(settings);
+      
       if (!success) {
-        res.status(500).json({ message: 'Failed to save settings' });
-        return;
+        return res.status(500).json({ message: "Failed to save settings" });
       }
       
-      res.status(200).json({ dayStartTime });
-    } 
-    // Method not allowed
-    else {
-      res.status(405).json({ message: 'Method not allowed' });
+      // Update environment variable for the current process
+      process.env.DAY_START_TIME = dayStartTime;
+      
+      return res.json({ 
+        message: "Day start time updated successfully", 
+        dayStartTime 
+      });
     }
+    
+    // Any other HTTP method is not allowed
+    return res.status(405).json({ message: "Method not allowed" });
   } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error handling day-start-time request:', error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }

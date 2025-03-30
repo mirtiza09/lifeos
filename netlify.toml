@@ -1,7 +1,7 @@
 [build]
   # Directory with the frontend build output
   publish = "dist"
-  # Build command to create the frontend
+  # Build command to create the frontend build
   command = "npm run build"
 
 # Handle SPA routing by redirecting all paths to index.html
@@ -10,11 +10,23 @@
   to = "/index.html"
   status = 200
 
-# Environment variables will need to be set in the Netlify dashboard
-[build.environment]
-  # Example: Point to your deployed backend API
-  VITE_API_URL = "https://your-backend-url.herokuapp.com"
-
-# Functions support if you want to use Netlify Functions for some backend logic
+# Functions support if you want to use Netlify Functions as serverless backend
 [functions]
   directory = "netlify/functions"
+  # Increase function timeout for database operations
+  node_bundler = "esbuild"
+
+# Headers to enable PWA capabilities and security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer-when-downgrade"
+    
+# Cache settings for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

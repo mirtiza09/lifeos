@@ -314,9 +314,7 @@ export default function Home() {
             />
           </div>
           
-          <div className="flex flex-col">
-            <LifeCategories />
-          </div>
+          <LifeCategories />
         </main>
         
         {/* Settings Modal */}

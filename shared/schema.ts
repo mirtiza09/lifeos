@@ -72,6 +72,44 @@ export const insertNoteSchema = createInsertSchema(notes).pick({
   userId: true,
 });
 
+// Daily Analytics table for tracking daily performance
+export const dailyAnalytics = pgTable("daily_analytics", {
+  id: serial("id").primaryKey(),
+  date: text("date").notNull(), // ISO date string (YYYY-MM-DD)
+  
+  // Task analytics
+  totalTasks: integer("total_tasks").default(0).notNull(),
+  completedTasks: integer("completed_tasks").default(0).notNull(),
+  newTasksCreated: integer("new_tasks_created").default(0).notNull(),
+  
+  // Habit analytics
+  totalHabits: integer("total_habits").default(0).notNull(),
+  activeHabits: integer("active_habits").default(0).notNull(),
+  completedHabits: integer("completed_habits").default(0).notNull(),
+  failedHabits: integer("failed_habits").default(0).notNull(),
+  counterHabitsProgress: text("counter_habits_progress").default('{}'), // JSON string with habit_id: { value, maxValue }
+  newHabitsCreated: integer("new_habits_created").default(0).notNull(),
+  
+  // Additional metrics
+  userId: integer("user_id").references(() => users.id), // Nullable foreign key
+  createdAt: text("created_at").notNull(), // ISO date-time string
+});
+
+export const insertDailyAnalyticsSchema = createInsertSchema(dailyAnalytics).pick({
+  date: true,
+  totalTasks: true,
+  completedTasks: true,
+  newTasksCreated: true,
+  totalHabits: true,
+  activeHabits: true,
+  completedHabits: true,
+  failedHabits: true,
+  counterHabitsProgress: true,
+  newHabitsCreated: true,
+  userId: true,
+  createdAt: true,
+});
+
 // Type exports
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -84,3 +122,6 @@ export type Habit = typeof habits.$inferSelect;
 
 export type InsertNote = z.infer<typeof insertNoteSchema>;
 export type Note = typeof notes.$inferSelect;
+
+export type InsertDailyAnalytics = z.infer<typeof insertDailyAnalyticsSchema>;
+export type DailyAnalytics = typeof dailyAnalytics.$inferSelect;

@@ -4,7 +4,54 @@ import { storage } from "./storage";
 import { insertTaskSchema, insertHabitSchema, insertNoteSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Helper function to check if it's a new day and log data if needed
+async function checkAndLogDailyData() {
+  try {
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    
+    // Set up a daily check for midnight reset
+    const currentTime = new Date();
+    
+    // Get configured day start time (default: 4:00 AM)
+    const dayStartTimeStr = process.env.DAY_START_TIME || "04:00";
+    const [hours, minutes] = dayStartTimeStr.split(":").map(Number);
+    
+    // Create a date object for today's day start time
+    const dayStartTime = new Date(currentTime);
+    dayStartTime.setHours(hours, minutes, 0, 0);
+    
+    // If current time is past the day start time, log the data for today
+    // This ensures we capture data once per day
+    const todayAnalytics = await storage.getDailyAnalytics(today);
+    
+    if (!todayAnalytics && currentTime >= dayStartTime) {
+      console.log(`It's past day start time (${dayStartTimeStr}), logging daily data...`);
+      await storage.logDailyAnalytics(today);
+      console.log('Daily analytics logged successfully.');
+    }
+    
+    // Schedule next check at the next day start time
+    const tomorrow = new Date(currentTime);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(hours, minutes, 0, 0);
+    
+    const timeUntilNextLog = tomorrow.getTime() - currentTime.getTime();
+    
+    // Schedule next check
+    setTimeout(() => {
+      checkAndLogDailyData();
+    }, timeUntilNextLog);
+    
+    console.log(`Next daily data check scheduled in ${Math.round(timeUntilNextLog / (1000 * 60 * 60))} hours`);
+  } catch (error) {
+    console.error('Error in daily data check:', error);
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up a daily log check at server startup
+  checkAndLogDailyData();
+  
   // Tasks endpoints
   app.get("/api/tasks", async (req, res) => {
     try {
@@ -409,6 +456,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error updating day start time:', error);
       res.status(500).json({ message: "Failed to update day start time" });
+    }
+  });
+  
+  // Analytics endpoints
+  app.get("/api/analytics/today", async (req, res) => {
+    try {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const analytics = await storage.getDailyAnalytics(today);
+      
+      if (!analytics) {
+        // If no analytics exist for today, generate them on-the-fly
+        const newAnalytics = await storage.logDailyAnalytics();
+        return res.json(newAnalytics);
+      }
+      
+      return res.json(analytics);
+    } catch (error) {
+      console.error('Analytics API error:', error);
+      return res.status(500).json({ error: 'Failed to process analytics request' });
+    }
+  });
+  
+  app.post("/api/analytics/log", async (req, res) => {
+    try {
+      // Force a log of analytics (used for testing or manual triggering)
+      // Can accept a specific date in the body
+      const { date } = req.body || {};
+      
+      // Log analytics with the provided date or default to today
+      const analytics = await storage.logDailyAnalytics(date);
+      
+      return res.json(analytics);
+    } catch (error) {
+      console.error('Analytics API error:', error);
+      return res.status(500).json({ error: 'Failed to process analytics request' });
+    }
+  });
+  
+  app.get("/api/analytics/range", async (req, res) => {
+    try {
+      // Get query parameters with default values
+      const { startDate, endDate } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required query parameters' });
+      }
+      
+      // Validate date formats
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+      if (!dateRegex.test(startDate as string) || !dateRegex.test(endDate as string)) {
+        return res.status(400).json({ error: 'Dates must be in YYYY-MM-DD format' });
+      }
+      
+      const analyticsData = await storage.getDailyAnalyticsRange(startDate as string, endDate as string);
+      
+      return res.json(analyticsData);
+    } catch (error) {
+      console.error('Analytics range API error:', error);
+      return res.status(500).json({ error: 'Failed to retrieve analytics range' });
     }
   });
 

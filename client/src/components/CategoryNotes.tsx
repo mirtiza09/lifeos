@@ -7,7 +7,7 @@ import { Loader, Edit, Save, X } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 
 interface CategoryNotesProps {
-  category: 'health' | 'career' | 'finances' | 'personal';
+  category: string;
   title?: string;
 }
 

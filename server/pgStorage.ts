@@ -2,7 +2,8 @@ import {
   users, type User, type InsertUser,
   tasks, type Task, type InsertTask,
   habits, type Habit, type InsertHabit,
-  notes, type Note, type InsertNote
+  notes, type Note, type InsertNote,
+  dailyAnalytics, type DailyAnalytics, type InsertDailyAnalytics
 } from "@shared/schema";
 import { IStorage } from "./storage";
 import { eq, and } from "drizzle-orm";
@@ -84,23 +85,25 @@ export class PgStorage implements IStorage {
     // Convert to our format (1 = Monday, 7 = Sunday)
     const formattedDay = dayOfWeek === 0 ? 7 : dayOfWeek;
     
-    console.log(`Checking habit "${habit.name}": day=${dayOfWeek}, formattedDay=${formattedDay}, repeatDays=${habit.repeatDays}`);
-    
     if (habit.repeatType === 'daily') {
-      console.log(`Habit "${habit.name}" is daily -> true`);
       return true;
     } else if (habit.repeatType === 'weekly' && habit.repeatDays) {
-      const isActive = habit.repeatDays.split(',').includes(formattedDay.toString());
-      console.log(`Habit "${habit.name}" is weekly, checking if ${formattedDay} is in [${habit.repeatDays}] -> ${isActive}`);
-      return isActive;
+      return habit.repeatDays.split(',').includes(formattedDay.toString());
     }
     
-    console.log(`Habit "${habit.name}" doesn't match any conditions -> false`);
     return false;
+  }
+  
+  // This extends the Habit type with additional computed properties
+  private extendHabit(habit: Habit): Habit & { isActiveToday: boolean } {
+    return {
+      ...habit,
+      isActiveToday: this.isHabitActiveToday(habit)
+    };
   }
 
   // Habit methods
-  async getHabits(): Promise<Habit[]> {
+  async getHabits(): Promise<(Habit & { isActiveToday: boolean })[]> {
     const habitsResult = await this.db.select().from(habits);
     
     // Add computed property isActiveToday
@@ -112,7 +115,10 @@ export class PgStorage implements IStorage {
 
   async getHabit(id: number): Promise<Habit | undefined> {
     const result = await this.db.select().from(habits).where(eq(habits.id, id));
-    return result[0];
+    if (result[0]) {
+      return this.extendHabit(result[0]);
+    }
+    return undefined;
   }
 
   async createHabit(habit: InsertHabit): Promise<Habit> {
@@ -220,11 +226,148 @@ export class PgStorage implements IStorage {
     return result.length > 0;
   }
 
+  // Analytics methods
+  async getDailyAnalytics(date: string): Promise<DailyAnalytics | undefined> {
+    const result = await this.db.select().from(dailyAnalytics).where(eq(dailyAnalytics.date, date));
+    return result[0];
+  }
+
+  async getDailyAnalyticsRange(startDate: string, endDate: string): Promise<DailyAnalytics[]> {
+    // Using a simpler approach with SQL template literals
+    const sql = neon(process.env.DATABASE_URL!);
+    
+    // Direct SQL query for date range with proper parameters
+    const result = await sql`
+      SELECT * FROM daily_analytics 
+      WHERE date >= ${startDate} AND date <= ${endDate}
+      ORDER BY date
+    `;
+    
+    // Transform the database result to match our expected schema
+    return result.map((row: any) => ({
+      id: row.id,
+      date: row.date,
+      totalTasks: row.total_tasks,
+      completedTasks: row.completed_tasks,
+      newTasksCreated: row.new_tasks_created,
+      totalHabits: row.total_habits,
+      activeHabits: row.active_habits,
+      completedHabits: row.completed_habits,
+      failedHabits: row.failed_habits,
+      counterHabitsProgress: row.counter_habits_progress,
+      newHabitsCreated: row.new_habits_created,
+      userId: row.user_id,
+      createdAt: row.created_at
+    }));
+  }
+
+  async logDailyAnalytics(dateStr?: string): Promise<DailyAnalytics> {
+    try {
+      const now = new Date();
+      const date = dateStr ? new Date(dateStr) : now;
+      const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+      
+      // Get all tasks
+      const allTasks = await this.getTasks();
+      // Count tasks created today
+      const todayCreatedTasks = allTasks.filter(task => {
+        const taskDate = new Date(task.createdAt).toISOString().split('T')[0];
+        return taskDate === formattedDate;
+      });
+      
+      // Get all habits with active today status
+      const allHabits = await this.getHabits();
+      const activeHabits = allHabits.filter(habit => habit.isActiveToday);
+      
+      // Count completed boolean habits
+      const completedBooleanHabits = activeHabits.filter(habit => 
+        habit.type === 'boolean' && habit.status === 'completed'
+      );
+      
+      // Count failed boolean habits
+      const failedBooleanHabits = activeHabits.filter(habit => 
+        habit.type === 'boolean' && habit.status === 'failed'
+      );
+      
+      // For counter habits, get their progress
+      const counterHabits = activeHabits.filter(habit => habit.type === 'counter');
+      const counterHabitsProgress: Record<number, { value: number, maxValue: number | null }> = {};
+      
+      // Track which counter habits are "completed" (value >= maxValue)
+      let completedCounterHabits = 0;
+      for (const habit of counterHabits) {
+        counterHabitsProgress[habit.id] = {
+          value: habit.value || 0,
+          maxValue: habit.maxValue
+        };
+        
+        // Count completed counter habits (where value >= maxValue)
+        if (habit.maxValue !== null && habit.value !== null && habit.value >= habit.maxValue) {
+          completedCounterHabits++;
+        }
+      }
+      
+      // Count habits created today
+      const todayCreatedHabits = allHabits.filter(habit => {
+        // Check if the habit was created today by looking at lastReset
+        // This is not perfect but a reasonable approximation
+        if (!habit.lastReset) return false;
+        const habitDate = new Date(habit.lastReset).toISOString().split('T')[0];
+        return habitDate === formattedDate;
+      });
+      
+      // Create analytics entry
+      const analytics: InsertDailyAnalytics = {
+        date: formattedDate,
+        totalTasks: allTasks.length,
+        completedTasks: allTasks.filter(task => task.completed).length,
+        newTasksCreated: todayCreatedTasks.length,
+        totalHabits: allHabits.length,
+        activeHabits: activeHabits.length,
+        completedHabits: completedBooleanHabits.length + completedCounterHabits,
+        failedHabits: failedBooleanHabits.length,
+        counterHabitsProgress: JSON.stringify(counterHabitsProgress),
+        newHabitsCreated: todayCreatedHabits.length,
+        userId: null, // If user system is implemented later
+        createdAt: now.toISOString()
+      };
+      
+      // Check if we already have an analytics entry for this date
+      const existingEntry = await this.getDailyAnalytics(formattedDate);
+      
+      if (existingEntry) {
+        // Update existing entry
+        const result = await this.db.update(dailyAnalytics)
+          .set(analytics)
+          .where(eq(dailyAnalytics.id, existingEntry.id))
+          .returning();
+        return result[0];
+      } else {
+        // Create new entry
+        const result = await this.db.insert(dailyAnalytics)
+          .values(analytics)
+          .returning();
+        return result[0];
+      }
+    } catch (error) {
+      console.error('Error logging daily analytics:', error);
+      throw error;
+    }
+  }
+
   // Method to log daily data - for compatibility with the old interface
-  public logDailyData(dateStr?: string, resetHabits: boolean = true): void {
-    if (resetHabits) {
-      // We'll handle this by resetting habits directly in the database
-      this.resetAllHabits();
+  // Now it also logs analytics data before resetting habits
+  public async logDailyData(dateStr?: string, resetHabits: boolean = true): Promise<void> {
+    try {
+      // First log analytics data before resetting habits
+      await this.logDailyAnalytics(dateStr);
+      
+      // Then reset habits if requested
+      if (resetHabits) {
+        await this.resetAllHabits();
+      }
+    } catch (error) {
+      console.error('Error in logDailyData:', error);
     }
   }
 

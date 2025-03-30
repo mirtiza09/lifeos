@@ -2,7 +2,8 @@ import {
   users, type User, type InsertUser,
   tasks, type Task, type InsertTask,
   habits, type Habit, type InsertHabit,
-  notes, type Note, type InsertNote
+  notes, type Note, type InsertNote,
+  dailyAnalytics, type DailyAnalytics, type InsertDailyAnalytics
 } from "@shared/schema";
 import fs from 'fs';
 import path from 'path';
@@ -41,8 +42,13 @@ export interface IStorage {
   updateNote(id: number, note: Partial<InsertNote>): Promise<Note | undefined>;
   deleteNote(id: number): Promise<boolean>;
   
+  // Analytics methods
+  getDailyAnalytics(date: string): Promise<DailyAnalytics | undefined>;
+  getDailyAnalyticsRange(startDate: string, endDate: string): Promise<DailyAnalytics[]>;
+  logDailyAnalytics(date?: string): Promise<DailyAnalytics>;
+  
   // Utility methods
-  logDailyData(dateStr?: string, resetHabits?: boolean): void;
+  logDailyData(dateStr?: string, resetHabits?: boolean): Promise<void>;
 }
 
 // Define storage file paths
@@ -126,7 +132,7 @@ export class MemStorage implements IStorage {
   }
   
   // Log today's data for reporting and reset habits
-  public logDailyData(dateStr?: string, resetHabits: boolean = true): void {
+  public async logDailyData(dateStr?: string, resetHabits: boolean = true): Promise<void> {
     try {
       const date = dateStr ? new Date(dateStr) : new Date();
       const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
@@ -639,26 +645,48 @@ export class MemStorage implements IStorage {
     }
     return result;
   }
+
+  // Analytics methods - stub implementations for compatibility
+  async getDailyAnalytics(date: string): Promise<DailyAnalytics | undefined> {
+    console.log('MemStorage: getDailyAnalytics called, but not implemented');
+    return undefined;
+  }
+
+  async getDailyAnalyticsRange(startDate: string, endDate: string): Promise<DailyAnalytics[]> {
+    console.log('MemStorage: getDailyAnalyticsRange called, but not implemented');
+    return [];
+  }
+
+  async logDailyAnalytics(date?: string): Promise<DailyAnalytics> {
+    console.log('MemStorage: logDailyAnalytics called, but not implemented');
+    
+    const now = new Date();
+    const dateStr = date || now.toISOString().split('T')[0];
+    
+    // Create a stub analytics object
+    return {
+      id: 1,
+      date: dateStr,
+      totalTasks: 0,
+      completedTasks: 0,
+      newTasksCreated: 0,
+      totalHabits: 0,
+      activeHabits: 0,
+      completedHabits: 0,
+      failedHabits: 0,
+      counterHabitsProgress: null,
+      newHabitsCreated: 0,
+      userId: null,
+      createdAt: now.toISOString()
+    };
+  }
 }
 
 // Import PostgreSQL storage implementation
 import { PgStorage } from './pgStorage';
 
-// Determine which storage implementation to use
-// We'll be using PostgreSQL for all environments to ensure data persistence
-let storageImplementation: IStorage;
-
-console.log('Environment USE_POSTGRES:', process.env.USE_POSTGRES);
-console.log('DATABASE_URL available:', !!process.env.DATABASE_URL);
-
-// Force PostgreSQL usage for data persistence
-try {
-  storageImplementation = new PgStorage();
-  console.log('Using PostgreSQL storage implementation');
-} catch (error) {
-  console.error('Failed to initialize PostgreSQL storage, falling back to MemStorage:', error);
-  storageImplementation = new MemStorage();
-  console.log('Using MemStorage implementation as fallback');
-}
+// Always use PostgreSQL for storage
+const storageImplementation = new PgStorage();
+console.log('Using PostgreSQL storage implementation');
 
 export const storage = storageImplementation;
