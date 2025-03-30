@@ -1,85 +1,101 @@
-// API endpoint for managing the day start time setting
-import { storage } from './_storage';
-import { withErrorHandler, validateRequiredFields } from './_error-handler';
+import fs from 'fs';
+import path from 'path';
 
-async function dayStartTimeHandler(req, res) {
-  console.log(`[DAY-START-TIME] Handler called with method: ${req.method}`);
-  console.log(`[DAY-START-TIME] Storage implementation: ${storage._implementation || 'unknown'}`);
-  
-  // GET - Retrieve day start time
-  if (req.method === 'GET') {
-    try {
-      console.log('[DAY-START-TIME] Getting day start time from storage');
+// Helper function to read settings from file or create defaults
+async function readSettings() {
+  try {
+    const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
+    
+    if (fs.existsSync(settingsPath)) {
+      const data = await fs.promises.readFile(settingsPath, 'utf8');
+      return JSON.parse(data);
+    } else {
+      // Default settings
+      const defaultSettings = {
+        dayStartTime: "04:00" // Default to 4:00 AM
+      };
       
-      // Add a fallback in case the storage method fails
-      try {
-        const dayStartTime = await storage.getDayStartTime();
-        console.log(`[DAY-START-TIME] Successfully retrieved time: ${dayStartTime}`);
-        return res.status(200).json({ dayStartTime });
-      } catch (storageError) {
-        console.error('[DAY-START-TIME] Error in storage.getDayStartTime:', storageError);
-        // Return default value as fallback
-        console.log('[DAY-START-TIME] Using fallback default time: 04:00');
-        return res.status(200).json({ 
-          dayStartTime: '04:00',
-          _note: 'Using fallback default time due to storage error'
-        });
+      // Ensure data directory exists
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) {
+        await fs.promises.mkdir(dataDir, { recursive: true });
       }
-    } catch (error) {
-      console.error('[DAY-START-TIME] Outer error in GET handler:', error);
-      // Instead of throwing, return a fallback with error info
-      return res.status(500).json({
-        error: true,
-        message: `Error retrieving day start time: ${error.message}`,
-        dayStartTime: '04:00', // Fallback default
-        _note: 'Using fallback default time due to error'
-      });
+      
+      // Write default settings
+      await fs.promises.writeFile(settingsPath, JSON.stringify(defaultSettings, null, 2));
+      return defaultSettings;
     }
+  } catch (error) {
+    console.error('Error reading settings:', error);
+    return { dayStartTime: "04:00" }; // Fallback default
   }
-  
-  // PUT - Update day start time
-  if (req.method === 'PUT') {
-    console.log('[DAY-START-TIME] Updating day start time');
-    try {
-      validateRequiredFields(req, ['time']);
-      const { time } = req.body;
-      console.log(`[DAY-START-TIME] Requested time update to: ${time}`);
-      
-      // Validate time format (HH:MM)
-      const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; 
-      if (!timeRegex.test(time)) {
-        console.error(`[DAY-START-TIME] Invalid time format: ${time}`);
-        return res.status(400).json({
-          error: true,
-          message: "Invalid time format. Please use HH:MM in 24-hour format (e.g., 08:30)."
-        });
-      }
-      
-      try {
-        const updatedTime = await storage.setDayStartTime(time);
-        console.log(`[DAY-START-TIME] Time successfully updated to: ${updatedTime}`);
-        return res.status(200).json({ dayStartTime: updatedTime });
-      } catch (storageError) {
-        console.error('[DAY-START-TIME] Error in storage.setDayStartTime:', storageError);
-        // Return the input value with a note about the error
-        return res.status(200).json({ 
-          dayStartTime: time,
-          _note: 'Time was set but not saved to storage due to an error'
-        });
-      }
-    } catch (error) {
-      console.error('[DAY-START-TIME] Outer error in PUT handler:', error);
-      return res.status(500).json({
-        error: true,
-        message: `Error updating day start time: ${error.message}`
-      });
-    }
-  }
-  
-  // Method not allowed
-  console.log(`[DAY-START-TIME] Method not allowed: ${req.method}`);
-  res.setHeader('Allow', ['GET', 'PUT']);
-  res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
 }
 
-export default withErrorHandler(dayStartTimeHandler);
+// Helper function to write settings to file
+async function writeSettings(settings) {
+  try {
+    const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
+    
+    // Ensure data directory exists
+    const dataDir = path.join(process.cwd(), 'data');
+    if (!fs.existsSync(dataDir)) {
+      await fs.promises.mkdir(dataDir, { recursive: true });
+    }
+    
+    await fs.promises.writeFile(settingsPath, JSON.stringify(settings, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error writing settings:', error);
+    return false;
+  }
+}
+
+export default async function handler(req, res) {
+  try {
+    // GET request - return the current day start time
+    if (req.method === 'GET') {
+      const settings = await readSettings();
+      return res.json({ dayStartTime: settings.dayStartTime });
+    }
+    
+    // POST request - update the day start time
+    if (req.method === 'POST') {
+      const { dayStartTime } = req.body;
+      
+      // Validate time format (HH:MM)
+      const timePattern = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
+      if (!timePattern.test(dayStartTime)) {
+        return res.status(400).json({ 
+          message: "Invalid time format. Please provide time in HH:MM format (24-hour)" 
+        });
+      }
+      
+      // Read existing settings
+      const settings = await readSettings();
+      
+      // Update day start time
+      settings.dayStartTime = dayStartTime;
+      
+      // Write updated settings
+      const success = await writeSettings(settings);
+      
+      if (!success) {
+        return res.status(500).json({ message: "Failed to save settings" });
+      }
+      
+      // Update environment variable for the current process
+      process.env.DAY_START_TIME = dayStartTime;
+      
+      return res.json({ 
+        message: "Day start time updated successfully", 
+        dayStartTime 
+      });
+    }
+    
+    // Any other HTTP method is not allowed
+    return res.status(405).json({ message: "Method not allowed" });
+  } catch (error) {
+    console.error('Error handling day-start-time request:', error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}

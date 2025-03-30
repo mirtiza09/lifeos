@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api") || path.startsWith("/.netlify/functions")) {
+    if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
@@ -41,20 +41,12 @@ app.use((req, res, next) => {
   // Setup database tables if using PostgreSQL
   if (process.env.DATABASE_URL) {
     try {
-      // Skip migration if MIGRATION_COMPLETED is set to prevent loops in deployment
-      if (process.env.MIGRATION_COMPLETED === 'true') {
-        log('Migration already completed, skipping database setup');
-      } else {
-        log('Setting up database tables...');
-        await setupDatabase();
-        log('Database tables setup completed.');
-        
-        // Set environment variable to prevent future migrations
-        process.env.MIGRATION_COMPLETED = 'true';
-        
-        // Database setup completed - no migration in normal startup
-        log('Database ready to use.');
-      }
+      log('Setting up database tables...');
+      await setupDatabase();
+      log('Database tables setup completed.');
+      
+      // Database setup completed - no migration in normal startup
+      log('Database ready to use.');
     } catch (error) {
       log(`Error during database setup/migration: ${error}`);
     }
@@ -79,17 +71,15 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use the PORT environment variable if provided (needed for Render), 
-  // otherwise default to port 5000 for local development
-  // This serves both the API and the client
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
+  // ALWAYS serve the app on port 5000
+  // this serves both the API and the client.
+  // It is the only port that is not firewalled.
+  const port = 5000;
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`Server running at http://0.0.0.0:${port}`);
-    log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    log(`Platform: ${process.env.DEPLOYMENT_PLATFORM || 'local'}`);
+    log(`serving on port ${port}`);
   });
 })();

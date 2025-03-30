@@ -6,12 +6,6 @@ import { users, tasks, habits, notes } from '@shared/schema';
 import type { Habit } from '@shared/schema';
 
 async function migrateData() {
-  // Skip if already migrated to prevent infinite loops in production
-  if (process.env.MIGRATION_COMPLETED === 'true') {
-    console.log('Migration already completed, skipping data migration');
-    return;
-  }
-  
   try {
     console.log('Starting migration from file-based storage to PostgreSQL...');
     
@@ -82,12 +76,6 @@ async function migrateData() {
 }
 
 async function setupDatabase() {
-  // Skip if already migrated to prevent infinite loops in production
-  if (process.env.MIGRATION_COMPLETED === 'true') {
-    console.log('Migration already completed, skipping database schema setup');
-    return;
-  }
-  
   console.log('Setting up database schema...');
   
   const databaseUrl = process.env.DATABASE_URL;

@@ -45,44 +45,32 @@ The application is configured to use PostgreSQL for data persistence:
 
 ## Deployment
 
-### Deploy to Netlify (Full Stack Serverless)
+### Option 1: Netlify (Frontend) + Separate Backend
 
-The application now has enhanced Netlify serverless Functions support for reliable deployment.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-See [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md) for detailed deployment instructions.
+1. Deploy the frontend to Netlify using the provided `netlify.toml` configuration
+2. Deploy the backend to a service like Railway (recommended), Render, or Fly.io
+3. Set the `VITE_API_URL` environment variable in Netlify to point to your backend URL
+
+### Option 2: Vercel (Full Stack Serverless)
+
+See [DEPLOYMENT-VERCEL.md](./DEPLOYMENT-VERCEL.md) for Vercel-specific instructions.
 
 1. Push your code to GitHub
-2. Import your project into Netlify using the provided `netlify.toml` configuration
+2. Import your project into Vercel
 3. Set environment variables for your PostgreSQL database
 4. Deploy with a single click
 
-#### Netlify-specific Features
-
-- **Modern Netlify Functions**: Uses the latest Netlify Functions API for better performance
-- **Automatic API Routing**: API requests are routed through Netlify Functions with zero configuration
-- **Zero-config Deployment**: The `netlify.toml` file and build scripts handle all deployment configuration
-- **Path-based Routing**: Each API endpoint gets its own function with proper path configuration
-- **Dynamic Route Parameters**: Route parameters (like `/habits/[id]`) are properly transformed to Netlify-compatible function names and routes
-- **Compliant Function Names**: All function names follow Netlify's naming conventions (alphanumeric, hyphens, underscores only)
-- **Default Exports**: All utility modules include necessary default exports for Netlify compatibility
-
-#### Recent Improvements
-
-- Fixed function naming for dynamic routes to comply with Netlify requirements
-- Enhanced parameter handling for nested routes
-- Added detailed troubleshooting documentation
-- Improved automatic build process for complex directory structures
-
-The application is fully optimized for Netlify's serverless architecture, creating a seamless deployment experience.
-
-### Alternative: Deploy to Replit
+### Option 3: Deploy to Replit
 
 1. Use the "Deploy" button in your Replit project
 2. No architectural changes required for this option
 
 ## Environment Variables
 
-- `DATABASE_URL`: PostgreSQL connection string (required for production)
+- `DATABASE_URL`: PostgreSQL connection string
+- `VITE_API_URL`: (Frontend only) URL to your backend API server
 
 ## License
 

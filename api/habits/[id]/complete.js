@@ -1,43 +1,38 @@
-// API endpoint for marking a habit as complete
-import { storage } from '../../_storage';
-import { withErrorHandler, validateId } from '../../_error-handler';
+// Example Vercel serverless function for completing a habit
+import { storage } from '../../../server/storage';
 
-async function completeHabitHandler(req, res) {
-  // Only allow PATCH requests for this endpoint
-  if (req.method !== 'PATCH') {
-    res.setHeader('Allow', ['PATCH']);
-    return res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
+export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
   }
-  
+
+  const { id } = req.query;
+  const habitId = parseInt(id);
+
   try {
-    // Get the habit ID from the URL parameter
-    const id = validateId(req);
-    
-    // Get the habit to verify it exists
-    const habit = await storage.getHabit(id);
-    
-    if (!habit) {
-      return res.status(404).json({ 
-        error: true, 
-        message: `Habit with ID ${id} not found` 
-      });
+    // POST /api/habits/[id]/complete - Complete a habit
+    if (req.method === 'POST') {
+      const habit = await storage.completeHabit(habitId);
+      if (!habit) {
+        res.status(404).json({ message: 'Habit not found' });
+        return;
+      }
+      res.status(200).json(habit);
     }
-    
-    // Check if the habit is active today
-    if (!habit.isActiveToday) {
-      return res.status(400).json({
-        error: true,
-        message: "This habit is not active today based on its repeat schedule."
-      });
+    // Method not allowed
+    else {
+      res.status(405).json({ message: 'Method not allowed' });
     }
-    
-    // Complete the habit
-    const updatedHabit = await storage.completeHabit(id);
-    
-    return res.status(200).json(updatedHabit);
   } catch (error) {
-    throw new Error(`Error completing habit: ${error.message}`);
+    console.error('API Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
-
-export default withErrorHandler(completeHabitHandler);

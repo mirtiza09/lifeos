@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import API_URL, { API_PATH_PREFIX } from './apiConfig';
+import API_URL from './apiConfig';
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -19,24 +19,8 @@ export async function apiRequest(
   const data = options?.data;
   
   try {
-    // Build the appropriate URL based on the deployment platform
-    let fullUrl;
-    
-    if (url.startsWith('http')) {
-      // External URL, leave as is
-      fullUrl = url;
-    } else if (url.startsWith('/api/')) {
-      // Convert standard API path to platform-specific path
-      const path = url.replace(/^\/api\//, '/');
-      fullUrl = `${API_PATH_PREFIX}${path}`;
-    } else {
-      // Standard path construction using base URL
-      const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
-      fullUrl = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
-    }
-    
-    console.log(`Making API request to: ${fullUrl} (method: ${method})`);
-    
+    // Prepend API_URL if needed
+    const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
     const res = await fetch(fullUrl, {
       method,
       headers: data ? { "Content-Type": "application/json" } : {},
@@ -70,24 +54,8 @@ export const getQueryFn = <TData>(options: {
     try {
       const url = queryKey[0] as string;
       
-      // Build the appropriate URL based on the deployment platform
-      let fullUrl;
-      
-      if (url.startsWith('http')) {
-        // External URL, leave as is
-        fullUrl = url;
-      } else if (url.startsWith('/api/')) {
-        // Convert standard API path to platform-specific path
-        const path = url.replace(/^\/api\//, '/');
-        fullUrl = `${API_PATH_PREFIX}${path}`;
-      } else {
-        // Standard path construction using base URL
-        const baseUrl = (window as any).API_BASE_URL !== undefined ? (window as any).API_BASE_URL : API_URL;
-        fullUrl = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
-      }
-        
-      console.log(`Making API request to: ${fullUrl}`);
-      
+      // Construct full URL
+      const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
       const res = await fetch(fullUrl, {
         credentials: "include",
       });

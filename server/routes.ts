@@ -6,12 +6,6 @@ import { z } from "zod";
 
 // Helper function to check if it's a new day and log data if needed
 async function checkAndLogDailyData() {
-  // Skip if MIGRATION_COMPLETED is true to prevent redundant operations
-  if (process.env.MIGRATION_COMPLETED === 'true') {
-    console.log('MIGRATION_COMPLETED flag is set, skipping automatic daily data check');
-    return;
-  }
-  
   try {
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     
@@ -55,97 +49,8 @@ async function checkAndLogDailyData() {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up a daily log check at server startup only if we're not running with MIGRATION_COMPLETED flag
-  if (process.env.MIGRATION_COMPLETED !== 'true') {
-    checkAndLogDailyData();
-  } else {
-    console.log('MIGRATION_COMPLETED flag is set, skipping automatic daily data check in registerRoutes');
-  }
-  
-  // Platform compatibility - route /.netlify/functions/* to /api/*
-  // This is needed for compatibility with Netlify and Render deployments
-  app.all("/.netlify/functions/*", (req, res, next) => {
-    // Rewrite the path from /.netlify/functions/something to /api/something
-    const newPath = req.path.replace(/^\/\.netlify\/functions\//, '/api/');
-    console.log(`Platform compatibility: Rewriting path from ${req.path} to ${newPath}`);
-    
-    // Change the URL and continue with routing
-    req.url = req.url.replace(/^\/\.netlify\/functions\//, '/api/');
-    next();
-  });
-  
-  // Add a diagnostic endpoint to check if API paths are working
-  app.get("/api-check", (req, res) => {
-    res.json({
-      status: "ok",
-      message: "API endpoints are functioning correctly",
-      timestamp: new Date().toISOString()
-    });
-  });
-  
-  // Detailed diagnostic endpoint for platform detection
-  app.get("/api/diagnostic", async (req, res) => {
-    try {
-      // Basic environment information
-      const environment = {
-        node_env: process.env.NODE_ENV || 'development',
-        platform: process.env.DEPLOYMENT_PLATFORM || 'unknown',
-        database_connected: !!process.env.DATABASE_URL,
-        migration_completed: process.env.MIGRATION_COMPLETED === 'true',
-        timestamp: new Date().toISOString(),
-        request_path: req.path,
-        request_url: req.url,
-        base_url: req.baseUrl,
-        original_url: req.originalUrl,
-        headers: {
-          host: req.headers.host,
-          referer: req.headers.referer,
-          'user-agent': req.headers['user-agent'],
-        }
-      };
-    
-      // Additional platform-specific diagnostics
-      let platformInfo = {};
-      
-      if (process.env.DEPLOYMENT_PLATFORM === 'render') {
-        platformInfo = {
-          is_render: true,
-          render_service_id: process.env.RENDER_SERVICE_ID || 'unknown',
-          render_instance_id: process.env.RENDER_INSTANCE_ID || 'unknown',
-          render_external_url: process.env.RENDER_EXTERNAL_URL || 'unknown',
-        };
-      } else if (process.env.DEPLOYMENT_PLATFORM === 'netlify') {
-        platformInfo = {
-          is_netlify: true,
-          netlify_site_name: process.env.SITE_NAME || 'unknown',
-          netlify_build_id: process.env.BUILD_ID || 'unknown',
-          netlify_context: process.env.CONTEXT || 'unknown',
-        };
-      }
-    
-      // API route information
-      const routeInfo = {
-        api_path_prefix: req.path.startsWith('/.netlify/functions') ? '/.netlify/functions' : '/api',
-        netlify_compatible: req.path.startsWith('/.netlify/functions'),
-        render_compatible: req.path.startsWith('/api'),
-      };
-    
-      // Return all diagnostic information
-      res.json({
-        status: 'ok',
-        message: 'API is functioning correctly',
-        environment,
-        platform: platformInfo,
-        routes: routeInfo,
-      });
-    } catch (error) {
-      console.error('Diagnostic endpoint error:', error);
-      res.status(500).json({ 
-        status: 'error',
-        message: 'Failed to generate diagnostic information'
-      });
-    }
-  });
+  // Set up a daily log check at server startup
+  checkAndLogDailyData();
   
   // Tasks endpoints
   app.get("/api/tasks", async (req, res) => {

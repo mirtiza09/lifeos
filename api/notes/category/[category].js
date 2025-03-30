@@ -1,118 +1,39 @@
-// API endpoint for managing notes by category
-import { storage } from '../../_storage';
-import { withErrorHandler, validateRequiredFields } from '../../_error-handler';
+// Example Vercel serverless function for notes by category
+import { storage } from '../../../server/storage';
 
-export default withErrorHandler(async function handler(req, res) {
-  // Get the category from the URL parameter
+export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   const { category } = req.query;
-  
-  if (!category) {
-    throw new Error('Category parameter is required');
-  }
-  
-  // GET - Retrieve a note by category
-  if (req.method === 'GET') {
-    try {
+
+  try {
+    // GET /api/notes/category/[category] - Get notes by category
+    if (req.method === 'GET') {
       const note = await storage.getNoteByCategory(category);
-      
       if (!note) {
-        return res.status(404).json({ 
-          error: true, 
-          message: `Note for category '${category}' not found` 
-        });
+        // If no note exists for this category, return an empty object
+        // so the frontend can create a new one
+        res.status(200).json({});
+        return;
       }
-      
-      return res.status(200).json(note);
-    } catch (error) {
-      throw new Error(`Error retrieving note: ${error.message}`);
+      res.status(200).json(note);
+    } 
+    // Method not allowed
+    else {
+      res.status(405).json({ message: 'Method not allowed' });
     }
+  } catch (error) {
+    console.error('API Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-  
-  // POST - Create a new note for this category
-  if (req.method === 'POST') {
-    try {
-      validateRequiredFields(req, ['content']);
-      const { content } = req.body;
-      
-      // Check if a note already exists for this category
-      const existingNote = await storage.getNoteByCategory(category);
-      
-      if (existingNote) {
-        // Update existing note
-        const updatedNote = await storage.updateNote(existingNote.id, { 
-          content,
-          updatedAt: new Date().toISOString()
-        });
-        return res.status(200).json(updatedNote);
-      } else {
-        // Create new note
-        const newNote = await storage.createNote({
-          category,
-          content,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
-        return res.status(201).json(newNote);
-      }
-    } catch (error) {
-      throw new Error(`Error creating/updating note: ${error.message}`);
-    }
-  }
-  
-  // PUT - Update an existing note for this category
-  if (req.method === 'PUT') {
-    try {
-      validateRequiredFields(req, ['content']);
-      const { content } = req.body;
-      
-      // Find the note by category
-      const existingNote = await storage.getNoteByCategory(category);
-      
-      if (!existingNote) {
-        return res.status(404).json({ 
-          error: true, 
-          message: `Note for category '${category}' not found` 
-        });
-      }
-      
-      // Update the note
-      const updatedNote = await storage.updateNote(existingNote.id, { 
-        content,
-        updatedAt: new Date().toISOString()
-      });
-      
-      return res.status(200).json(updatedNote);
-    } catch (error) {
-      throw new Error(`Error updating note: ${error.message}`);
-    }
-  }
-  
-  // DELETE - Delete a note for this category
-  if (req.method === 'DELETE') {
-    try {
-      // Find the note by category
-      const existingNote = await storage.getNoteByCategory(category);
-      
-      if (!existingNote) {
-        return res.status(404).json({ 
-          error: true, 
-          message: `Note for category '${category}' not found` 
-        });
-      }
-      
-      // Delete the note
-      await storage.deleteNote(existingNote.id);
-      
-      return res.status(200).json({ 
-        success: true, 
-        message: `Note for category '${category}' deleted successfully` 
-      });
-    } catch (error) {
-      throw new Error(`Error deleting note: ${error.message}`);
-    }
-  }
-  
-  // Method not allowed
-  res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-  res.status(405).json({ error: true, message: `Method ${req.method} Not Allowed` });
-});
+}
