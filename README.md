@@ -62,7 +62,16 @@ See [DEPLOYMENT-NETLIFY.md](./DEPLOYMENT-NETLIFY.md) for detailed deployment ins
 - **Automatic API Routing**: API requests are routed through Netlify Functions with zero configuration
 - **Zero-config Deployment**: The `netlify.toml` file and build scripts handle all deployment configuration
 - **Path-based Routing**: Each API endpoint gets its own function with proper path configuration
+- **Dynamic Route Parameters**: Route parameters (like `/habits/[id]`) are properly transformed to Netlify-compatible function names and routes
+- **Compliant Function Names**: All function names follow Netlify's naming conventions (alphanumeric, hyphens, underscores only)
 - **Default Exports**: All utility modules include necessary default exports for Netlify compatibility
+
+#### Recent Improvements
+
+- Fixed function naming for dynamic routes to comply with Netlify requirements
+- Enhanced parameter handling for nested routes
+- Added detailed troubleshooting documentation
+- Improved automatic build process for complex directory structures
 
 The application is fully optimized for Netlify's serverless architecture, creating a seamless deployment experience.
 

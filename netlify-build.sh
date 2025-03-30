@@ -1,6 +1,17 @@
 #!/bin/bash
-# Netlify build script to prepare API endpoints as Netlify Functions
-# Completely rewritten to fix path issues and ensure correct imports
+# ====================================
+# Netlify Build Script for LifeOS API
+# ====================================
+# This script transforms our Express-style API files into modern Netlify Functions
+# Key features:
+# 1. Utility modules are properly excluded from function generation
+# 2. Dynamic route parameters (e.g., [id]) are transformed to Netlify-compatible formats
+# 3. Nested API paths are properly adapted for Netlify's routing system
+# 4. Proper import paths are maintained between adapter files and original handlers
+#
+# IMPORTANT: Netlify has strict requirements for function names!
+# - Function names can only include alphanumeric characters, hyphens, and underscores
+# - NO square brackets or other special characters are allowed
 
 echo "Starting Netlify Functions build process..."
 
@@ -129,12 +140,24 @@ EOF
 function create_nested_netlify_function() {
   nested_file=$1
   local_path=${nested_file#api/}
-  function_name=$(echo $local_path | tr '/' '-' | sed 's/.js$//')
+  
+  # Create a Netlify-compliant function name by:
+  # 1. Replacing / with -
+  # 2. Removing file extension
+  # 3. CRITICAL FIX: Remove brackets entirely from function names
+  #    This transforms 'habits/[id]' to 'habits-id' which is valid for Netlify
+  #    Without this, deployment will fail with "Invalid function name" errors
+  function_name=$(echo $local_path | tr '/' '-' | sed 's/.js$//' | sed 's/\[\([^]]*\)\]/\1/g')
+  
   nested_dir=$(dirname "$local_path")
   
   # Parse the path to identify parameters
   api_path="/api/$local_path"
-  # Replace [param] with :param for routing
+  
+  # Replace [param] with :$1 for Netlify's path-based routing
+  # This is crucial for parameter extraction to work correctly
+  # Format: `/api/habits/[id]` becomes `/api/habits/:$1`
+  # The path matcher will extract the parameter from the URL and pass it via context.params
   route_path=$(echo $api_path | sed 's/\[\([^]]*\)\]/:$1/g')
   
   # Create directory for the function
@@ -221,7 +244,7 @@ EOF
   # Explicitly copy the original handler file to ensure it's available
   cp "$nested_file" "netlify/api/$local_path" || echo "Warning: Failed to copy $nested_file"
   
-  echo "Created modern Netlify function for nested API: $function_name with path: $route_path"
+  echo "Created modern Netlify function for nested API: $function_name with path: $route_path (original path: $local_path)"
 }
 
 # Process all API endpoints except utility files and netlify-adapter.js
@@ -232,14 +255,20 @@ for api_file in api/*.js; do
   fi
 done
 
-# Process nested API endpoints (like habits/[id]/complete.js)
-for dir in api/*; do
-  if [ -d "$dir" ]; then
-    for nested_file in $dir/*.js; do
-      if [ -f "$nested_file" ]; then
-        create_nested_netlify_function $nested_file
-      fi
-    done
+# Process all nested API endpoints using find
+# This is more robust than nested for loops for handling complex directory structures
+# It will handle files like:
+# - habits/[id].js
+# - habits/[id]/complete.js
+# - habits/[id]/operations/reset.js (deeply nested)
+echo "Processing nested API endpoints..."
+
+# Use find to discover all JS files in subdirectories of api/
+# Note: We need to find any JS file that's not at the top level of the api/ directory
+find api -type f -name "*.js" | grep "/" | grep -v "api/[^/]*\.js$" | while read -r nested_file; do
+  if [[ "$nested_file" != *"_"* && "$nested_file" != *"netlify-adapter.js" ]]; then
+    # Only process actual endpoints, not utility files
+    create_nested_netlify_function "$nested_file"
   fi
 done
 

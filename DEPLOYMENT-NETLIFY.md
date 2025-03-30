@@ -61,11 +61,38 @@ The application is configured to route API requests through Netlify Functions:
    - The `netlify-adapter.js` which handles client-side routing adjustments
    - The `netlify-build.sh` script which transforms API endpoints into modern Netlify Functions
 
+### Function Naming Convention
+
+Netlify has strict requirements for function names:
+- Only alphanumeric characters, hyphens, and underscores are allowed
+- No special characters like square brackets are permitted
+
+For dynamic routes (like `/api/habits/[id]`):
+1. The build script automatically converts `/habits/[id]` paths to functions named `habits-id` (removing brackets)
+2. Route parameters are still properly extracted from the URL using Netlify's path-based routing
+3. Original API handler files are kept intact and properly referenced from the function wrappers
+
 ### Database Connection
 
 The application connects to your PostgreSQL database using the `DATABASE_URL` environment variable. Make sure your database is accessible from Netlify's servers.
 
 ## Troubleshooting
+
+### Invalid Function Names Error
+
+If you see an error message like this:
+```
+** ERROR **
+The following serverless functions failed to deploy: habits-[id], tasks-[id]
+To deploy these functions successfully, change the function names to contain only alphanumeric characters, hyphens or underscores
+```
+
+This means your function names contain invalid characters (like square brackets). To fix this:
+
+1. Check that you're using the latest version of the build scripts in this repository
+2. The `netlify-build.sh` script should automatically convert dynamic route segments like `[id]` to valid function names like `id`
+3. If you've created custom API routes with parameters, ensure the build script properly handles them
+4. For manual testing, you can run `./build-for-netlify.sh` locally and verify that no function names in `netlify/functions/` contain brackets
 
 ### Build Errors with @netlify/functions
 
