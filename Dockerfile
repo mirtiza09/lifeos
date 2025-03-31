@@ -32,6 +32,10 @@ COPY --from=builder /app/server ./server
 COPY --from=builder /app/shared ./shared
 # Copy health check script
 COPY --from=builder /app/healthcheck.js ./healthcheck.js
+# Copy PWA assets
+COPY --from=builder /app/client/public/manifest.json ./dist/manifest.json
+COPY --from=builder /app/client/public/service-worker.js ./dist/service-worker.js
+COPY --from=builder /app/client/public/icons ./dist/icons
 # Set production environment
 ENV NODE_ENV=production
 
