@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: life-os-dashboard
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/tasks
+    buildCommand: ""  # Let Docker handle the build
+    startCommand: ""  # Let Docker handle the start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
+    autoDeploy: true

@@ -1,0 +1,17 @@
+node_modules
+.git
+.github
+.gitignore
+.vscode
+.idea
+.env
+*.log
+data
+.cache
+.config
+.local
+.netlify
+.replit
+.upm
+attached_assets
+test-output
