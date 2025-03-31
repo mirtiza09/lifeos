@@ -8,6 +8,15 @@ This guide explains how to deploy the Life OS Dashboard on Render using Docker.
 2. A [Neon](https://neon.tech) account with a PostgreSQL database
 3. Your code pushed to a Git repository (GitHub, GitLab, etc.)
 
+## What We've Done to Ensure a Successful Deployment
+
+We've made several important modifications to ensure the application runs properly on Render:
+
+1. **Improved Server Stability**: Added proper error handling and process signal handling to keep the Node.js process alive.
+2. **Docker Health Checks**: Implemented a health check that verifies the API is responding correctly.
+3. **Dockerfile Optimizations**: Ensured all necessary files are included in the production image.
+4. **Process Management**: Fixed issues that could cause the container to exit prematurely.
+
 ## Deployment Steps
 
 ### 1. Set Up Your Neon Database
@@ -28,6 +37,7 @@ This guide explains how to deploy the Life OS Dashboard on Render using Docker.
 6. Set environment variables:
    - `DATABASE_URL`: Your Neon database connection string
    - `NODE_ENV`: `production`
+   - `PORT`: `5000`
 7. Click "Create Web Service"
 
 #### Option 2: Using Blueprint (render.yaml)
@@ -44,6 +54,7 @@ This guide explains how to deploy the Life OS Dashboard on Render using Docker.
 1. After deployment completes, click on the generated URL to access your application
 2. The frontend should load and connect to the API endpoints
 3. Check Render logs for any errors
+4. Verify the Docker healthcheck is passing (visible in Render logs)
 
 ## Troubleshooting
 
@@ -57,14 +68,15 @@ If you see database connection errors in the logs:
 
 ### Application Not Starting
 
-If the application container exits with code 0:
+If the application container exits:
 
 1. Check Render logs for errors
-2. Verify that the `start` script in package.json is correct
-3. Make sure the `CMD` in Dockerfile is pointing to the right command
+2. Ensure that the healthcheck is passing
+3. Verify that all environment variables are correctly set
 
 ### Other Issues
 
 1. Check if your server is binding to the correct port (5000) and host (0.0.0.0)
 2. Ensure all required environment variables are set
 3. Verify that the frontend build is being served correctly
+4. If issues persist, try rebuilding the service in Render

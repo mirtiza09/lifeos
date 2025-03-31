@@ -13,7 +13,7 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
-# Build the frontend and server
+# Build the frontend and server only
 RUN npm run build
 
 # Stage 2: Production image
@@ -32,7 +32,6 @@ COPY --from=builder /app/server ./server
 COPY --from=builder /app/shared ./shared
 # Copy health check script
 COPY --from=builder /app/healthcheck.js ./healthcheck.js
-
 # Set production environment
 ENV NODE_ENV=production
 
@@ -43,5 +42,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node healthcheck.js
 
-# Ensure server stays alive
-CMD ["node", "--unhandled-rejections=strict", "dist/index.js"]
+# Start the server directly - no migration
+CMD ["node", "dist/index.js"]

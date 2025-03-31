@@ -1,12 +1,12 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { setupDatabase } from "./migrateToPostgres";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Simple request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -37,46 +37,31 @@ app.use((req, res, next) => {
   next();
 });
 
+// Main application startup
 (async () => {
   try {
-    // Setup database tables if using PostgreSQL
-    if (process.env.DATABASE_URL) {
-      try {
-        log('Setting up database tables...');
-        await setupDatabase();
-        log('Database tables setup completed.');
-        
-        // Database setup completed - no migration in normal startup
-        log('Database ready to use.');
-      } catch (error) {
-        log(`Error during database setup/migration: ${error}`);
-        // Continue even if there's a database error - don't exit
-      }
-    }
+    log('Starting server without migration...');
     
+    // Register API routes
     const server = await registerRoutes(app);
 
+    // Global error handler
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
 
       res.status(status).json({ message });
       log(`Error in request handling: ${err.message}`);
-      // Don't throw - that would crash the server
     });
 
-    // importantly only setup vite in development and after
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
+    // Set up frontend serving
     if (app.get("env") === "development") {
       await setupVite(app, server);
     } else {
       serveStatic(app);
     }
 
-    // ALWAYS serve the app on port 5000
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
+    // Start the server
     const port = 5000;
     server.listen({
       port,
@@ -86,7 +71,7 @@ app.use((req, res, next) => {
       log(`Server is running on port ${port}`);
     });
 
-    // Handle process termination signals properly
+    // Handle process termination signals
     const shutdownGracefully = () => {
       log('Shutting down gracefully...');
       server.close(() => {
@@ -104,7 +89,7 @@ app.use((req, res, next) => {
     process.on('SIGINT', shutdownGracefully);
     process.on('SIGTERM', shutdownGracefully);
     
-    // Keep the Node.js process alive even if there are unhandled promise rejections
+    // Keep the process alive even if there are unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
       log(`Unhandled Promise Rejection: ${reason}`);
       // Don't exit the process
