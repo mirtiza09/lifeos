@@ -10,6 +10,7 @@ import {
   Database,
   FileJson,
   CalendarDays,
+  RefreshCw,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { useSettings } from "@/lib/settingsContext";
 import { useToast } from "@/hooks/use-toast";
+import { clearAPICache } from "../registerSW";
 
 export default function Header() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -34,6 +36,7 @@ export default function Header() {
     useSettings();
   const [timeInput, setTimeInput] = useState(dayStartTime);
   const [isResetting, setIsResetting] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { toast } = useToast();
 
   // Update the date every minute
@@ -97,6 +100,40 @@ export default function Header() {
       });
     } finally {
       setIsResetting(false);
+    }
+  };
+  
+  const handleRefreshCache = async () => {
+    try {
+      setIsRefreshing(true);
+      
+      // Clear the API cache using the service worker
+      const result = await clearAPICache();
+      
+      if (result) {
+        toast({
+          title: "Cache Refreshed",
+          description: "API data cache has been cleared. You now have the latest data.",
+        });
+        
+        // Reload the page to get fresh data
+        window.location.reload();
+      } else {
+        toast({
+          title: "Warning",
+          description: "Service worker is not ready yet. Please try again in a moment.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error refreshing cache:", error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh the cache. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -256,6 +293,37 @@ export default function Header() {
   
                   <Separator className="my-3" />
   
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <RefreshCw className="w-4 h-4" />
+                      <h3 className="font-medium">Refresh Data</h3>
+                    </div>
+  
+                    <div className="text-xs text-muted-foreground mb-3">
+                      Clear cached API data to ensure you're seeing the latest information.
+                      Useful if data appears outdated on mobile devices.
+                    </div>
+  
+                    <Button
+                      variant="outline"
+                      onClick={handleRefreshCache}
+                      className="rounded-none mt-1 w-full"
+                      disabled={isRefreshing}
+                      size="sm"
+                    >
+                      {isRefreshing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Refreshing...
+                        </>
+                      ) : (
+                        "Force Refresh Data"
+                      )}
+                    </Button>
+                  </div>
+                  
+                  <Separator className="my-3" />
+                  
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
                       <FileJson className="w-4 h-4" />

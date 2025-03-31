@@ -10,6 +10,7 @@ import Finances from "@/pages/Finances";
 import Personal from "@/pages/Personal";
 import Analytics from "@/pages/Analytics";
 import CategoryPage from "@/pages/CategoryPage";
+import NetworkStatusBar from "@/components/NetworkStatusBar";
 import { SettingsProvider } from "@/lib/settingsContext";
 
 function Router() {
@@ -32,6 +33,7 @@ function AppContent() {
   return (
     <>
       <Router />
+      <NetworkStatusBar />
       <Toaster />
     </>
   );

@@ -34,11 +34,21 @@ The `manifest.json` file in the `client/public` directory provides metadata abou
 
 ### 2. Service Worker
 
-The service worker (`service-worker.js`) enables offline functionality by caching assets:
+The service worker (`service-worker.js`) enables offline functionality by using a hybrid caching strategy:
 
-- It caches the application shell during installation
-- It intercepts network requests and serves cached content when offline
-- It updates the cache when new versions are deployed
+- **For Static Assets** (HTML, CSS, JS, images):
+  - Uses **Cache First** strategy
+  - Checks cache first and returns cached response if available
+  - Falls back to network request if item isn't in cache
+  - Caches new responses for future use
+
+- **For API Requests** (Dynamic Data):
+  - Uses **Network First** strategy
+  - Attempts to fetch fresh data from the network first
+  - Falls back to cached data only when the network is unavailable
+  - Updates cache with fresh data in the background
+
+This hybrid approach ensures optimal performance while keeping dynamic data as fresh as possible.
 
 ### 3. Icons
 
@@ -73,7 +83,41 @@ if ('serviceWorker' in navigator) {
 }
 ```
 
-### 6. Docker Integration
+### 6. Cache Management and Force Refresh
+
+To address potential caching issues, especially on mobile devices where PWAs can sometimes show outdated data:
+
+- A "Force Refresh Data" button has been added to the settings panel (under the "Data" tab)
+- This button triggers a function that communicates with the service worker to clear the API cache
+- After clearing the cache, the application reloads to fetch fresh data
+- Implementation uses messaging between the application and service worker:
+  ```typescript
+  // In registerSW.ts
+  export function clearAPICache(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      if (!navigator.serviceWorker.controller) {
+        resolve(false);
+        return;
+      }
+      
+      // Send message to service worker to clear cache
+      navigator.serviceWorker.controller.postMessage({
+        action: 'clearAPICache'
+      });
+      
+      // Set up listener for response
+      const messageListener = (event) => {
+        if (event.data && event.data.action === 'apiCacheCleared') {
+          resolve(true);
+        }
+      };
+      
+      navigator.serviceWorker.addEventListener('message', messageListener);
+    });
+  }
+  ```
+
+### 7. Docker Integration
 
 The Dockerfile has been updated to include PWA assets in the final build:
 
@@ -105,3 +149,41 @@ Users can install the Life OS PWA on their devices by:
 3. Following the on-screen instructions to complete the installation
 
 Once installed, the application will appear on the user's home screen or app launcher and can be launched like any other application.
+
+## Troubleshooting Common PWA Caching Issues
+
+### Issue 1: Outdated Data
+
+**Symptom**: Users see old data even when changes have been made recently.
+
+**Solution**: 
+- Use the "Force Refresh Data" button in the Settings menu, under the "Data" tab
+- This will clear the API cache and reload fresh data from the server
+- For developers: The service worker uses Network First for API requests, but cache may still be used when offline
+
+### Issue 2: App Not Updating
+
+**Symptom**: The application doesn't reflect the latest deployed version.
+
+**Solution**:
+- The service worker includes version management and will automatically update
+- Hard refresh (Ctrl+F5 on Windows/Linux, Cmd+Shift+R on Mac) can force an update
+- In extreme cases, users can clear their browser cache and site data
+
+### Issue 3: Offline Functionality Not Working
+
+**Symptom**: The app doesn't work when offline.
+
+**Solution**:
+- Ensure the user has visited enough pages while online to cache essential assets
+- Check if the service worker is properly registered (look in browser developer tools)
+- Verify that the necessary cache storage permissions are granted
+
+### Issue 4: Mobile-Specific Issues
+
+**Symptom**: PWA behaves differently on mobile devices compared to desktop.
+
+**Solution**:
+- iOS Safari has stricter caching rules than Chrome - more frequent force refreshes may be needed
+- iOS PWAs run in their own context and have limitations regarding some browser APIs
+- Android Chrome should provide a more consistent experience with desktop Chrome
